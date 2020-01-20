@@ -1,6 +1,6 @@
 import React from "react";
 import "./App.less";
-import { Layout, Menu, Breadcrumb, Icon } from "antd";
+import { Layout, Menu, Icon } from "antd";
 import RouterView from "./router";
 import routeConfig from "./router/config";
 import { Link } from "react-router-dom";

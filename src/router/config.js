@@ -8,7 +8,7 @@ import ExamInfo from "../pages/educational/ExamInfo";
 import Chapter from "../pages/educational/Chapter";
 import Question from "../pages/educational/Question";
 // Examination
-import Quiz from "../pages/examination/Quiz";
+// import Quiz from "../pages/examination/Quiz";
 import Paper from "../pages/examination/Paper";
 // School
 import Classes from "../pages/school/Classes";

@@ -1,6 +1,6 @@
 import React from "react";
 
-import { Row, Divider } from "antd";
+import { Row, Button } from "antd";
 
 import Header from "../../components/Header";
 import Container from "../../components/Container";
@@ -34,14 +34,14 @@ export default props => {
                 title: "操作",
                 render: (text, record) => (
                   <span>
-                    <a
+                    <Button
                       href="#"
                       onClick={() => {
                         console.log(record);
                       }}
                     >
                       重置密码
-                    </a>
+                    </Button>
                   </span>
                 )
               }

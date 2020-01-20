@@ -2,6 +2,7 @@ import React from "react";
 import Header from "../../components/Header";
 import Container from "../../components/Container";
 import SortTable from "../../components/SortTable";
+import { Button } from "antd";
 
 export default props => {
   return (
@@ -43,14 +44,14 @@ export default props => {
               render: (text, record) => {
                 return (
                   <span>
-                    <a
+                    <Button
                       href="#"
                       onClick={() => {
                         console.log(record);
                       }}
                     >
                       编辑
-                    </a>
+                    </Button>
                   </span>
                 );
               }

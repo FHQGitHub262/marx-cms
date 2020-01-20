@@ -1,6 +1,6 @@
 import React from "react";
 
-import { Row, Divider } from "antd";
+import { Row } from "antd";
 
 import { MajorCard } from "../../components/Card";
 import Header from "../../components/Header";

@@ -1,21 +1,36 @@
-import React from "react";
+import React, { useState } from "react";
+
 import Header from "../../components/Header";
 import Container from "../../components/Container";
 import SortTable from "../../components/SortTable";
 import { Divider, Button } from "antd";
+import Pop from "../../components/Pop";
+import { ClassCreator } from "../../components/Form";
 
 export default props => {
+  const [visible, setVisible] = useState(false);
+  const changePop = () => {
+    setVisible(!visible);
+  };
   return (
     <div>
+      <Pop
+        visible={visible}
+        doHide={() => {
+          changePop();
+        }}
+      >
+        <ClassCreator />
+      </Pop>
       <Header
-        title="专业管理"
+        title="班级管理"
         onBack={() => {
           props.history.goBack();
         }}
         action={{
-          name: "添加专业",
+          name: "添加班级",
           handler: () => {
-            console.log("添加成功");
+            changePop();
           }
         }}
       />
@@ -45,7 +60,10 @@ export default props => {
                     <Divider type="vertical" />
                     <Button
                       onClick={() => {
-                        console.log(record);
+                        props.history.push({
+                          pathname: "/school/class",
+                          query: record
+                        });
                       }}
                     >
                       详情

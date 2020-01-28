@@ -1,12 +1,26 @@
-import React from "react";
+import React, { useState } from "react";
 import Header from "../../components/Header";
 import Container from "../../components/Container";
 import SortTable from "../../components/SortTable";
 import { Divider, Button } from "antd";
+import Pop from "../../components/Pop";
+import { PaperCreator } from "../../components/Form";
 
 export default props => {
+  const [visible, setVisible] = useState(false);
+  const changePop = () => {
+    setVisible(!visible);
+  };
   return (
     <div>
+      <Pop
+        visible={visible}
+        doHide={() => {
+          changePop();
+        }}
+      >
+        <PaperCreator />
+      </Pop>
       <Header
         title="试卷管理"
         onBack={() => {
@@ -15,7 +29,7 @@ export default props => {
         action={{
           name: "添加试卷",
           handler: () => {
-            console.log("添加成功");
+            changePop();
           }
         }}
       />

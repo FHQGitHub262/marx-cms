@@ -1,20 +1,42 @@
-import React from "react";
-
+import React, { useState, useEffect } from "react";
 import { Row, Divider, Button } from "antd";
 
 import Header from "../../components/Header";
 import Container from "../../components/Container";
 import SortTable from "../../components/SortTable";
+import Pop from "../../components/Pop";
+import { TeacherCreator } from "../../components/Form";
+import { GET } from "../../lib/fetch";
 
 export default props => {
+  const [visible, setVisible] = useState(false);
+  const [raw, setRaw] = useState(undefined);
+  const changePop = () => {
+    setVisible(!visible);
+  };
+  useEffect(() => {
+    GET("/educational/teachers", { id: 1 }).then(res => {
+      // console.log(res);
+      setRaw(res.data || []);
+    });
+  }, []);
+
   return (
     <div>
+      <Pop
+        visible={visible}
+        doHide={() => {
+          changePop();
+        }}
+      >
+        <TeacherCreator />
+      </Pop>
       <Header
         title="教师管理"
         action={{
           name: "添加教师",
           handler: () => {
-            console.log(props);
+            changePop();
           }
         }}
       />
@@ -63,6 +85,7 @@ export default props => {
                 }
               }
             ]}
+            data={raw}
           />
         </Row>
       </Container>

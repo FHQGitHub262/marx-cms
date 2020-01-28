@@ -1,12 +1,41 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Header from "../../components/Header";
 import Container from "../../components/Container";
 import SortTable from "../../components/SortTable";
 import { Button } from "antd";
+import Pop from "../../components/Pop";
+import { CourseCreator } from "../../components/Form";
+import { GET } from "../../lib/fetch";
 
 export default props => {
+  const [visible, setVisible] = useState(false);
+  const [raw, setRaw] = useState(undefined);
+  const changePop = () => {
+    setVisible(!visible);
+  };
+
+  useEffect(() => {
+    if (props.location.query) {
+      console.log("here");
+      GET("/educational/courses", { id: 1 }).then(res => {
+        console.log(res);
+        setRaw(res.data || []);
+      });
+    } else {
+      props.history.push("/educational/subject");
+    }
+  }, [props]);
+
   return (
     <div>
+      <Pop
+        visible={visible}
+        doHide={() => {
+          changePop();
+        }}
+      >
+        <CourseCreator />
+      </Pop>
       <Header
         title="课程管理"
         onBack={() => {
@@ -15,7 +44,7 @@ export default props => {
         action={{
           name: "添加课程",
           handler: () => {
-            console.log("添加成功");
+            changePop();
           }
         }}
       />
@@ -37,7 +66,7 @@ export default props => {
                 { text: "进行中", value: "active" },
                 { text: "已结束", value: "end" }
               ],
-              onFilter: (value, record) => record.name.includes(value)
+              onFilter: (value, record) => record.status.includes(value)
             },
             {
               title: "操作",
@@ -45,7 +74,6 @@ export default props => {
                 return (
                   <span>
                     <Button
-                      href="#"
                       onClick={() => {
                         console.log(record);
                       }}
@@ -57,6 +85,7 @@ export default props => {
               }
             }
           ]}
+          data={raw}
         />
       </Container>
     </div>

@@ -1,20 +1,34 @@
-import React from "react";
+import React, { useState } from "react";
 
 import { Row, Button } from "antd";
 
 import Header from "../../components/Header";
 import Container from "../../components/Container";
 import SortTable from "../../components/SortTable";
+import Pop from "../../components/Pop";
+import { StudentImporter } from "../../components/Form";
 
 export default props => {
+  const [visible, setVisible] = useState(false);
+  const changePop = () => {
+    setVisible(!visible);
+  };
   return (
     <div>
+      <Pop
+        visible={visible}
+        doHide={() => {
+          changePop();
+        }}
+      >
+        <StudentImporter />
+      </Pop>
       <Header
-        title="教师管理"
+        title="学生管理"
         action={{
-          name: "添加教师",
+          name: "添加学生",
           handler: () => {
-            console.log(props);
+            changePop();
           }
         }}
       />

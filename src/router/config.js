@@ -101,7 +101,8 @@ export default [
       {
         path: "/school/college",
         name: "学院一览",
-        component: College
+        component: College,
+        display: true
       },
       {
         path: "/school/major",

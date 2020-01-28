@@ -10,7 +10,9 @@ export const CollegeCard = props => {
         bordered={true}
         style={{ maxWidth: 300 }}
         actions={[
-          <Button onClick={(props.handler || (() => {}))()}>查看</Button>
+          <Button onClick={() => (props.handler || (() => {}))(props)}>
+            查看
+          </Button>
         ]}
       >
         {props.majorNum && <p>专业数：{props.majorNum}</p>}
@@ -28,7 +30,9 @@ export const MajorCard = props => {
         bordered={true}
         style={{ maxWidth: 300 }}
         actions={[
-          <Button onClick={(props.handler || (() => {}))()}>查看</Button>
+          <Button onClick={() => (props.handler || (() => {}))(props)}>
+            查看
+          </Button>
         ]}
       >
         {props.classNum && <p>班级数：{props.classNum}</p>}

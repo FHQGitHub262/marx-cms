@@ -1,39 +1,25 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./index.less";
 import { Table, Button, Alert } from "antd";
 
-// TODO: 接入数据请求功能
-
-const data = [
-  {
-    key: "1",
-    name: "John Brown",
-    age: 32,
-    address: "New York No. 1 Lake Park"
-  },
-  {
-    key: "2",
-    name: "Jim Green",
-    age: 42,
-    address: "London No. 1 Lake Park"
-  },
-  {
-    key: "3",
-    name: "Joe Black",
-    age: 32,
-    address: "Sidney No. 1 Lake Park"
-  },
-  {
-    key: "4",
-    name: "Jim Red",
-    age: 32,
-    address: "London No. 2 Lake Park"
-  }
-];
-
 export default props => {
   let [selectedRowKeys, setSelectedRowKeys] = useState([]);
-  let [loading, setLoading] = useState(false);
+  let [loading, setLoading] = useState(!Boolean(props.data));
+  useEffect(() => {
+    let timer;
+    if (!props.data) {
+      timer = setTimeout(() => {
+        setLoading(false);
+      }, 3000);
+    } else {
+      clearInterval(timer);
+      setLoading(false);
+    }
+
+    return () => {
+      clearInterval(timer);
+    };
+  }, [props.data]);
   return (
     <div>
       <div style={{ marginBottom: 16 }} className="actions">
@@ -54,7 +40,7 @@ export default props => {
               onClick={() =>
                 action.handler(
                   selectedRowKeys.map(key =>
-                    data.find(item => item.key === key)
+                    props.data.find(item => item.key === key)
                   )
                 )
               }
@@ -75,6 +61,7 @@ export default props => {
         )}
       </div>
       <Table
+        loading={loading}
         rowSelection={{
           selectedRowKeys,
           onChange: nextSelected => {
@@ -83,8 +70,9 @@ export default props => {
           }
         }}
         columns={props.columns || []}
-        dataSource={data}
+        dataSource={props.data || []}
         pagination={false}
+        rowKey={record => record.id}
       />
     </div>
   );

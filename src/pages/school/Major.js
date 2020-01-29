@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 import { Row } from "antd";
 
@@ -7,12 +7,26 @@ import Header from "../../components/Header";
 import Container from "../../components/Container";
 import Pop from "../../components/Pop";
 import { MajorCreator } from "../../components/Form";
+import { GET } from '../../lib/fetch';
 
 export default props => {
   const [visible, setVisible] = useState(false);
+  const [raw, setRaw] = useState([]);
   const changePop = () => {
     setVisible(!visible);
   };
+
+  useEffect(() => {
+    if (props.location.query) {
+      GET("/school/majors", { id: 1 }).then(res => {
+        console.log(res);
+        setRaw(res.data || []);
+      });
+    } else {
+      props.history.push("/school/college");
+    }
+  }, [props]);
+
   return (
     <div>
       <Pop
@@ -25,6 +39,9 @@ export default props => {
       </Pop>
       <Header
         title="专业一览"
+        onBack={() => {
+          props.history.goBack();
+        }}
         action={{
           name: "添加专业",
           handler: () => {
@@ -34,17 +51,19 @@ export default props => {
       />
       <Container>
         <Row gutter={[24, 16]}>
-          <MajorCard
-            MajorName="计算机学院"
-            majorNum={12}
-            classNum={10}
-            handler={item => {
-              props.history.push({
-                pathname: "/school/class",
-                query: item
-              });
-            }}
-          />
+          {
+            raw.map(major => <MajorCard
+              key={major.id}
+              MajorName={major.name}
+              classNum={major.classNum}
+              handler={item => {
+                props.history.push({
+                  pathname: "/school/class",
+                  query: item
+                });
+              }}
+            />)
+          }
         </Row>
       </Container>
     </div>

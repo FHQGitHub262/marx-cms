@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 import { Row, Button } from "antd";
 
@@ -7,12 +7,26 @@ import Container from "../../components/Container";
 import SortTable from "../../components/SortTable";
 import Pop from "../../components/Pop";
 import { StudentImporter } from "../../components/Form";
+import { GET } from '../../lib/fetch';
 
 export default props => {
   const [visible, setVisible] = useState(false);
+  const [raw, setRaw] = useState(undefined);
   const changePop = () => {
     setVisible(!visible);
   };
+
+  useEffect(() => {
+    if (props.location.query) {
+      console.log("here");
+      GET("/school/students", { id: 1 }).then(res => {
+        console.log(res);
+        setRaw(res.data || []);
+      });
+    } else {
+      props.history.push("/school/college");
+    }
+  }, [props]);
   return (
     <div>
       <Pop
@@ -35,6 +49,7 @@ export default props => {
       <Container>
         <Row gutter={[24, 16]}>
           <SortTable
+            data={raw}
             columns={[
               {
                 title: "工号",

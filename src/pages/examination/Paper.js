@@ -1,16 +1,27 @@
-import React, { useState } from "react";
+import React, { useState, useEffect  } from "react";
 import Header from "../../components/Header";
 import Container from "../../components/Container";
 import SortTable from "../../components/SortTable";
 import { Divider, Button } from "antd";
 import Pop from "../../components/Pop";
 import { PaperCreator } from "../../components/Form";
+import { GET } from '../../lib/fetch';
 
 export default props => {
   const [visible, setVisible] = useState(false);
+  const [raw, setRaw] = useState(undefined);
+
   const changePop = () => {
     setVisible(!visible);
   };
+
+  useEffect(() => {
+    GET("/examination/papers", { id: 1 }).then(res => {
+      console.log(res);                             
+      setRaw(res.data || []);
+    });
+  }, [props]);
+
   return (
     <div>
       <Pop
@@ -42,7 +53,7 @@ export default props => {
             },
             {
               title: "科目",
-              dataIndex: "type"
+              dataIndex: "subject"
             },
             {
               title: "操作",
@@ -77,6 +88,7 @@ export default props => {
               }
             }
           ]}
+          data={raw}
         />
       </Container>
     </div>

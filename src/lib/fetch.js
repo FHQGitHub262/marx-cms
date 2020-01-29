@@ -1,11 +1,10 @@
 import { notification } from "antd";
 import { encode } from "querystring";
-
-const suffix = 'http://penguin.termina.linux.test:4000'
+import config from '../config';
 
 export const POST = function(url, data = {}) {
   // Default options are marked with *
-  return fetch(suffix + url, {
+  return fetch(config.suffix + url, {
     body: JSON.stringify(data), // must match 'Content-Type' header
     cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
     credentials: "include", // include, same-origin, *omit
@@ -31,7 +30,7 @@ export const POST = function(url, data = {}) {
 
 export const GET = function(url, data = {}) {
   // Default options are marked with *
-  return fetch(suffix + url + "?" + encode(data), {
+  return fetch(config.suffix + url + "?" + encode(data), {
     cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
     credentials: "include", // include, same-origin, *omit
     headers: {

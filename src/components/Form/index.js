@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef, useImperativeHandle, forwardRef } from "react";
 import Form from "./Form";
 
 import login from "./schema/Login";
@@ -15,16 +15,40 @@ import subjectCreator from "./schema/SubjectCreator";
 import teacherCreator from "./schema/TeacherCreator";
 import questionImporter from "./schema/QuestionImporter";
 
-export const Login = () => <Form schema={login} />;
-export const CollegeCreator = () => <Form schema={collegeCreator} />;
-export const ChapterCreator = () => <Form schema={chapterCreator} />;
-export const ClassCreator = () => <Form schema={classCreator} />;
-export const CourseCreator = () => <Form schema={courseCreator} />;
-export const ExamCreator = () => <Form schema={examCreator} />;
-export const MajorCreator = () => <Form schema={majorCreator} />;
-export const PaperCreator = () => <Form schema={paperCreator} />;
-export const StudentAdder = () => <Form schema={studentAdder} />;
-export const StudentImporter = () => <Form schema={studentImporter} />;
-export const SubjectCreator = () => <Form schema={subjectCreator} />;
-export const TeacherCreator = () => <Form schema={teacherCreator} />;
-export const QuestionImporter = () => <Form schema={questionImporter} />;
+export const Login = () => <Form schema={login} formName="loginform" />;
+export const CollegeCreator = () => (
+  <Form schema={collegeCreator} formName="collegeCreator" />
+);
+export const ChapterCreator = () => (
+  <Form schema={chapterCreator} formName="chapterCreator" />
+);
+export const ClassCreator = () => (
+  <Form schema={classCreator} formName="classCreator" />
+);
+export const CourseCreator = () => (
+  <Form schema={courseCreator} formName="courseCreator" />
+);
+export const ExamCreator = () => (
+  <Form schema={examCreator} formName="examCreator" />
+);
+export const MajorCreator = () => (
+  <Form schema={majorCreator} formName="majorCreator" />
+);
+export const PaperCreator = () => (
+  <Form schema={paperCreator} formName="paperCreator" />
+);
+export const StudentAdder = () => (
+  <Form schema={studentAdder} formName="studentAdder" />
+);
+export const StudentImporter = () => (
+  <Form schema={studentImporter} formName="studentImporter" />
+);
+export const SubjectCreator = () => (
+  <Form schema={subjectCreator} formName="subjectCreator" />
+);
+export const TeacherCreator = () => (
+  <Form schema={teacherCreator} formName="teacherCreator" />
+);
+export const QuestionImporter = () => (
+  <Form schema={questionImporter} formName="questionImporter" />
+);

@@ -1,31 +1,40 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
+import beforeSubmit from "../../lib/beforeSubmit";
+import Context from "../../context";
 
-import { Row } from "antd";
+import { Row, notification } from "antd";
 
 import { MajorCard } from "../../components/Card";
 import Header from "../../components/Header";
 import Container from "../../components/Container";
 import Pop from "../../components/Pop";
 import { MajorCreator } from "../../components/Form";
-import { GET } from '../../lib/fetch';
+import { GET, POST } from "../../lib/fetch";
 
 export default props => {
   const [visible, setVisible] = useState(false);
   const [raw, setRaw] = useState([]);
+
+  const context = useContext(Context);
   const changePop = () => {
     setVisible(!visible);
   };
 
+  const init = () => {
+    console.log(props.location.query);
+    GET("/school/majors", { id: props.location.query.id }).then(res => {
+      console.log(res);
+      setRaw(res.data || []);
+    });
+  };
+
   useEffect(() => {
-    if (props.location.query) {
-      GET("/school/majors", { id: 1 }).then(res => {
-        console.log(res);
-        setRaw(res.data || []);
-      });
+    if (props.location.query && context.userInfo) {
+      init();
     } else {
       props.history.push("/school/college");
     }
-  }, [props]);
+  }, []);
 
   return (
     <div>
@@ -33,6 +42,25 @@ export default props => {
         visible={visible}
         doHide={() => {
           changePop();
+        }}
+        handleOk={() => {
+          if (beforeSubmit(context.majorCreator)) {
+            POST("/school/createMajor", {
+              ...context.majorCreator.data,
+              college: props.location.query.id
+            })
+              .then(res => {
+                notification.success({ message: "创建成功", duration: 2 });
+                changePop();
+                init();
+              })
+              .catch(e => {
+                notification.error({
+                  message: "创建出错",
+                  duration: 2
+                });
+              });
+          }
         }}
       >
         <MajorCreator />
@@ -50,11 +78,12 @@ export default props => {
         }}
       />
       <Container>
-        <Row gutter={[24, 16]}>
-          {
-            raw.map(major => <MajorCard
+        <Row>
+          {raw.map(major => (
+            <MajorCard
               key={major.id}
-              MajorName={major.name}
+              id={major.id}
+              majorName={major.name}
               classNum={major.classNum}
               handler={item => {
                 props.history.push({
@@ -62,8 +91,8 @@ export default props => {
                   query: item
                 });
               }}
-            />)
-          }
+            />
+          ))}
         </Row>
       </Container>
     </div>

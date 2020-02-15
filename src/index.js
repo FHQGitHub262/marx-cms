@@ -1,18 +1,73 @@
-import React from "react";
+import React, { useState } from "react";
 import ReactDOM from "react-dom";
-import "./index.css";
+// import "antd/dist/antd.less";
+
 import App from "./App";
 import { HashRouter } from "react-router-dom";
-import * as serviceWorker from "./serviceWorker";
+// import * as serviceWorker from "./serviceWorker";
 
-ReactDOM.render(
-  <HashRouter>
-    <App />
-  </HashRouter>,
-  document.getElementById("root")
-);
+import Context from "./context";
+
+const Component = () => {
+  const [loginform, update_loginform] = useState({});
+  const [userInfo, setUserInfo] = useState([]);
+  const [login, update_login] = useState([]);
+  const [collegeCreator, update_collegeCreator] = useState([]);
+  const [chapterCreator, update_chapterCreator] = useState([]);
+  const [classCreator, update_classCreator] = useState([]);
+  const [courseCreator, update_courseCreator] = useState([]);
+  const [examCreator, update_examCreator] = useState([]);
+  const [majorCreator, update_majorCreator] = useState([]);
+  const [paperCreator, update_paperCreator] = useState([]);
+  const [studentAdder, update_studentAdder] = useState([]);
+  const [studentImporter, update_studentImporter] = useState([]);
+  const [subjectCreator, update_subjectCreator] = useState([]);
+  const [teacherCreator, update_teacherCreator] = useState([]);
+  const [questionImporter, update_questionImporter] = useState([]);
+
+  return (
+    <Context.Provider
+      value={{
+        loginform,
+        update_loginform,
+        userInfo,
+        setUserInfo,
+        collegeCreator,
+        update_collegeCreator,
+        chapterCreator,
+        update_chapterCreator,
+        classCreator,
+        update_classCreator,
+        courseCreator,
+        update_courseCreator,
+        examCreator,
+        update_examCreator,
+        majorCreator,
+        update_majorCreator,
+        paperCreator,
+        update_paperCreator,
+        studentAdder,
+        update_studentAdder,
+        studentImporter,
+        update_studentImporter,
+        subjectCreator,
+        update_subjectCreator,
+        teacherCreator,
+        update_teacherCreator,
+        questionImporter,
+        update_questionImporter
+      }}
+    >
+      <HashRouter>
+        <App />
+      </HashRouter>
+    </Context.Provider>
+  );
+};
+
+ReactDOM.render(<Component />, document.getElementById("root"));
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.
 // Learn more about service workers: https://bit.ly/CRA-PWA
-serviceWorker.unregister();
+// serviceWorker.unregister();

@@ -1,26 +1,34 @@
-import React, { useState, useEffect  } from "react";
+import React, { useState, useEffect, useContext } from "react";
+import beforeSubmit from "../../lib/beforeSubmit";
+import Context from "../../context";
+
 import Header from "../../components/Header";
 import Container from "../../components/Container";
 import SortTable from "../../components/SortTable";
-import { Divider, Button } from "antd";
+import { Divider, Button, notification } from "antd";
 import Pop from "../../components/Pop";
 import { PaperCreator } from "../../components/Form";
-import { GET } from '../../lib/fetch';
+import { GET, POST } from "../../lib/fetch";
 
 export default props => {
   const [visible, setVisible] = useState(false);
   const [raw, setRaw] = useState(undefined);
 
+  const context = useContext(Context);
+
   const changePop = () => {
     setVisible(!visible);
   };
 
-  useEffect(() => {
-    GET("/examination/papers", { id: 1 }).then(res => {
-      console.log(res);                             
+  const init = () => {
+    GET("/examination/papers").then(res => {
       setRaw(res.data || []);
     });
-  }, [props]);
+  };
+
+  useEffect(() => {
+    init();
+  }, []);
 
   return (
     <div>
@@ -28,6 +36,26 @@ export default props => {
         visible={visible}
         doHide={() => {
           changePop();
+        }}
+        handleOk={() => {
+          console.log(context.paperCreator);
+          if (beforeSubmit(context.paperCreator)) {
+            console.log(context.paperCreator);
+            POST("/examination/createPaper", {
+              ...context.paperCreator.data
+            })
+              .then(res => {
+                notification.success({ message: "创建成功", duration: 2 });
+                changePop();
+                init();
+              })
+              .catch(e => {
+                notification.error({
+                  message: "创建出错",
+                  duration: 2
+                });
+              });
+          }
         }}
       >
         <PaperCreator />
@@ -52,8 +80,20 @@ export default props => {
               dataIndex: "name"
             },
             {
-              title: "科目",
-              dataIndex: "subject"
+              title: "类型",
+              render: (text, record) => (record.type ? "大考" : "小练习")
+            },
+            {
+              title: "单选题数",
+              dataIndex: "totalSingle"
+            },
+            {
+              title: "多选题数",
+              dataIndex: "totalMulti"
+            },
+            {
+              title: "判断题数",
+              dataIndex: "totalTrueFalse"
             },
             {
               title: "操作",

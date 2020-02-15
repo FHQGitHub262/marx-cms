@@ -15,7 +15,7 @@ export const CollegeCard = props => {
           </Button>
         ]}
       >
-        {props.majorNum && <p>专业数：{props.majorNum}</p>}
+        {props.majorNum !== undefined && <p>专业数：{props.majorNum}</p>}
         {props.classNum && <p>班级数：{props.classNum}</p>}
       </Card>
     </Col>
@@ -26,7 +26,7 @@ export const MajorCard = props => {
   return (
     <Col xs={24} sm={12} md={6}>
       <Card
-        title={props.majorName || "College"}
+        // title={props.majorName || "College"}
         bordered={true}
         style={{ maxWidth: 300 }}
         actions={[
@@ -35,6 +35,7 @@ export const MajorCard = props => {
           </Button>
         ]}
       >
+        {props.majorName}
         {props.classNum && <p>班级数：{props.classNum}</p>}
       </Card>
     </Col>
@@ -71,8 +72,8 @@ export const SubjectCard = props => {
           </Button>
         ]}
       >
-        {props.chapterNum && <p>章节数：{props.chapterNum}</p>}
-        {props.questionNum && <p>题目数：{props.questionNum}</p>}
+        {props.majorNum !== undefined && <p>专业数：{props.majorNum}</p>}
+        {/* {props.questionNum && <p>题目数：{props.questionNum}</p>} */}
       </Card>
     </Col>
   );

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import "./index.less";
 
 import { PageHeader, Button } from "antd";
@@ -15,7 +15,8 @@ export default props => {
   return (
     <PageHeader
       style={{
-        border: "1px solid rgb(235, 237, 240)"
+        border: "1px solid var(--background-color)",
+        background: "var(--background-color)"
       }}
       title={props.title || "Title"}
       {...nextProps}

@@ -1,32 +1,58 @@
-import React, { useState, useEffect } from "react";
-import { Row, Divider, Button } from "antd";
-
+import React, { useState, useEffect, useContext } from "react";
+import { Row, Divider, Button, notification } from "antd";
+import Context from "../../context";
 import Header from "../../components/Header";
 import Container from "../../components/Container";
 import SortTable from "../../components/SortTable";
 import Pop from "../../components/Pop";
 import { TeacherCreator } from "../../components/Form";
-import { GET } from "../../lib/fetch";
+import { GET, POST } from "../../lib/fetch";
+import beforeSubmit from "../../lib/beforeSubmit";
 
 export default props => {
   const [visible, setVisible] = useState(false);
   const [raw, setRaw] = useState(undefined);
+  const context = useContext(Context);
   const changePop = () => {
     setVisible(!visible);
   };
   useEffect(() => {
-    GET("/educational/teachers", { id: 1 }).then(res => {
-      // console.log(res);
-      setRaw(res.data || []);
+    if (Object.keys(context.userInfo).length > 0) {
+      GET("/educational/teachers", { id: 1 }).then(res => {
+        // console.log(res);
+        setRaw(res.data || []);
+      });
+    } else {
+      console.log("here", context.userInfo);
+    }
+  }, [context.userInfo]);
+
+  const resetPassword = record => {
+    POST("/user/resetPassword", record).then(res => {
+      console.log(res);
     });
-  }, []);
+  };
 
   return (
     <div>
       <Pop
         visible={visible}
         doHide={() => {
-          changePop();
+          if (beforeSubmit(context.teacherCreator)) {
+            POST("/educational/createTeacher", context.teacherCreator.data)
+              .then(res => {
+                changePop();
+                notification.success({
+                  message: "创建成功"
+                });
+              })
+              .catch(e => {
+                notification.error({
+                  message: "创建失败",
+                  duration: 2
+                });
+              });
+          }
         }}
       >
         <TeacherCreator />
@@ -41,7 +67,7 @@ export default props => {
         }}
       />
       <Container>
-        <Row gutter={[24, 16]}>
+        <Row>
           <SortTable
             columns={[
               {
@@ -57,18 +83,16 @@ export default props => {
                 render: (text, record) => (
                   <span>
                     <Button
-                      href="#"
                       onClick={() => {
-                        console.log(record);
+                        resetPassword({ uuid: record.UserUuid });
                       }}
                     >
                       重置密码
                     </Button>
                     <Divider type="vertical" />
                     <Button
-                      href="#"
                       onClick={() => {
-                        console.log(record);
+                        // console.log(record);
                       }}
                     >
                       分配课程

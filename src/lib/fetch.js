@@ -1,6 +1,6 @@
 import { notification } from "antd";
 import { encode } from "querystring";
-import config from '../config';
+import config from "../config";
 
 export const POST = function(url, data = {}) {
   // Default options are marked with *
@@ -9,8 +9,8 @@ export const POST = function(url, data = {}) {
     cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
     credentials: "include", // include, same-origin, *omit
     headers: {
-      "user-agent": "Mozilla/4.0 MDN Example",
-      "content-type": "application/x-www-form-urlencoded"
+      "content-type": "application/json"
+      // "content-type": "application/x-www-form-urlencoded"
     },
     method: "POST", // *GET, POST, PUT, DELETE, etc.
     mode: "cors", // no-cors, cors, *same-origin

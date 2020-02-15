@@ -6,9 +6,8 @@ export default props => {
   return (
     <Row
       className="container"
-      gutter={[24, 16]}
       style={{
-        margin: 16
+        padding: 16
       }}
     >
       {props.children}

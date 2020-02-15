@@ -9,12 +9,16 @@ export default props => {
         style={{ verticalAlign: "middle", fontSize: 128 }}
         size={props.size || 128}
       >
-        {props.name || "Temp"}
+        {props.name || "欢迎"}
       </Avatar>
-      <h2>{props.name || "Temp"}</h2>
+      <h2>{props.name || ""}</h2>
       <h3>
-        <label>权限：</label>
-        {(props.privilege || ["系统管理员"]).join(" ")}
+        <label>
+          {JSON.parse(props.privilege || "[]") instanceof Array &&
+            JSON.parse(props.privilege || "[]").length > 0 &&
+            "权限："}
+        </label>
+        {JSON.parse(props.privilege || "[]").join(" ")}
       </h3>
     </div>
   );

@@ -1,33 +1,61 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
+import beforeSubmit from "../../lib/beforeSubmit";
+import Context from "../../context";
 import Header from "../../components/Header";
 import Container from "../../components/Container";
 import SortTable from "../../components/SortTable";
-import { Button } from "antd";
+import { Button, notification } from "antd";
 import Pop from "../../components/Pop";
 import { ChapterCreator } from "../../components/Form";
-import { GET } from "../../lib/fetch";
+import { GET, POST } from "../../lib/fetch";
 export default props => {
   const [visible, setVisible] = useState(false);
   const [raw, setRaw] = useState(undefined);
+
+  const context = useContext(Context);
+
   const changePop = () => {
     setVisible(!visible);
   };
 
+  const init = () => {
+    GET("/educational/chapters", { id: props.location.query.id }).then(res => {
+      console.log(res);
+      setRaw(res.data || []);
+    });
+  };
   useEffect(() => {
-    if (props.location.query) {
-      GET("/educational/chapters", { id: 1 }).then(res => {
-        console.log(res);
-        setRaw(res.data || []);
-      });
+    if (props.location.query && context.userInfo) {
+      init();
     } else {
       props.history.push("/educational/subject");
     }
-  }, [props]);
+  }, []);
 
   return (
     <div>
       <Pop
         visible={visible}
+        handleOk={() => {
+          console.log(props.location.query, context.chapterCreator);
+          if (beforeSubmit(context.chapterCreator)) {
+            POST("/educational/createChapter", {
+              ...context.chapterCreator.data,
+              subject: props.location.query.id
+            })
+              .then(res => {
+                notification.success({ message: "创建成功", duration: 2 });
+                changePop();
+                init();
+              })
+              .catch(e => {
+                notification.error({
+                  message: "创建出错",
+                  duration: 2
+                });
+              });
+          }
+        }}
         doHide={() => {
           changePop();
         }}

@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useContext } from "react";
+import Context from "../context";
 import UserInfo from "../components/UserInfo";
-import Pop from "../components/Pop";
-import { PaperCreator } from "../components/Form";
+
 const styles = {
   home: {
     display: "flex",
@@ -16,24 +16,12 @@ const styles = {
   }
 };
 
-export default (props, context) => {
-  console.log(props);
-  const [userInfo, setUserInfo] = useState(props.history.location.query || {});
-  useEffect(() => {
-    window.addEventListener("userInfo", e => {
-      console.log("userInfo");
-      setUserInfo(e.detail);
-    });
-  }, []);
-
+export default props => {
+  const context = useContext(Context);
   return (
     <div style={styles.home}>
-      <div></div>
       <div style={styles.main}>
-        <UserInfo {...(userInfo || {})} />
-        <Pop>
-          <PaperCreator />
-        </Pop>
+        <UserInfo {...(context.userInfo || {})} />
       </div>
     </div>
   );

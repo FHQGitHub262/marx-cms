@@ -1,6 +1,19 @@
 export default {
   type: "object",
   properties: {
+    name: {
+      title: "试卷名称",
+      type: "string"
+    },
+    chapter: {
+      title: "使用学科",
+      type: "string",
+      "ui:widget": "subjectSelector"
+    },
+    forExam: {
+      title: "用于正式考试",
+      type: "boolean"
+    },
     singleNum: {
       title: "单选题目数",
       type: "number",
@@ -8,9 +21,13 @@ export default {
     },
     singleList: {
       title: "单选题范围选择",
-      type: "string",
+      type: "array",
       "ui:disabled": (formData, rootValue) => formData.singleNum <= 0,
-      default: "{}"
+      "ui:widget": "questionSelector",
+      "ui:options": {
+        type: "single"
+      },
+      default: []
     },
     multiNum: {
       title: "多选题目数",
@@ -19,9 +36,13 @@ export default {
     },
     multiList: {
       title: "多选题范围选择",
-      type: "string",
-      "ui:disabled": (formData, rootValue) => formData.multiNum <= 0,
-      default: "{}"
+      type: "array",
+      "ui:disabled": formData => formData.multiNum <= 0,
+      "ui:widget": "questionSelector",
+      "ui:options": {
+        type: "multi"
+      },
+      default: []
     },
     truefalseNum: {
       title: "判断题目数",
@@ -30,9 +51,13 @@ export default {
     },
     truefalseList: {
       title: "判断题范围选择",
-      type: "string",
+      type: "array",
       "ui:disabled": formData => formData.truefalseNum <= 0,
-      default: "{}"
+      "ui:widget": "questionSelector",
+      "ui:options": {
+        type: "trueFalse"
+      },
+      default: []
     }
     // select: {
     //   title: "单选",

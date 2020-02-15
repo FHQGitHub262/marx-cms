@@ -7,6 +7,7 @@ import Exam from "../pages/educational/Exam";
 import ExamInfo from "../pages/educational/ExamInfo";
 import Chapter from "../pages/educational/Chapter";
 import Question from "../pages/educational/Question";
+import CourseStudent from "../pages/educational/Student";
 // Examination
 // import Quiz from "../pages/examination/Quiz";
 import Paper from "../pages/examination/Paper";
@@ -50,6 +51,11 @@ export default [
       {
         path: "/educational/course",
         component: Course,
+        name: "课程管理"
+      },
+      {
+        path: "/educational/student",
+        component: CourseStudent,
         name: "课程管理"
       },
       {

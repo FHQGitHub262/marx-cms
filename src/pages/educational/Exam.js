@@ -1,22 +1,27 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
+import beforeSubmit from "../../lib/beforeSubmit";
+import Context from "../../context";
+
 import Header from "../../components/Header";
 import Container from "../../components/Container";
 import SortTable from "../../components/SortTable";
-import { Divider, Button } from "antd";
+import { Divider, Button, notification } from "antd";
 import Pop from "../../components/Pop";
 import { ExamCreator } from "../../components/Form";
-import { GET } from "../../lib/fetch";
+import { GET, POST } from "../../lib/fetch";
+
 export default props => {
   const [visible, setVisible] = useState(false);
   const [raw, setRaw] = useState(undefined);
+  const context = useContext(Context);
 
   const changePop = () => {
     setVisible(!visible);
   };
 
-  useEffect(() => {
+  const init = () => {
     if (props.location.query) {
-      GET("/educational/exams", { id: 1 }).then(res => {
+      GET("/educational/exams").then(res => {
         console.log(res);
         setRaw(res.data || []);
       });
@@ -28,6 +33,10 @@ export default props => {
     } else {
       props.location.push("/");
     }
+  };
+
+  useEffect(() => {
+    init();
   }, []);
   return (
     <div>
@@ -35,6 +44,26 @@ export default props => {
         visible={visible}
         doHide={() => {
           changePop();
+        }}
+        handleOk={() => {
+          console.log(context.examCreator);
+          if (beforeSubmit(context.examCreator)) {
+            console.log(context.examCreator);
+            POST("/educational/createExam", {
+              ...context.examCreator.data
+            })
+              .then(res => {
+                notification.success({ message: "创建成功", duration: 2 });
+                changePop();
+                init();
+              })
+              .catch(e => {
+                notification.error({
+                  message: "创建出错",
+                  duration: 2
+                });
+              });
+          }
         }}
       >
         <ExamCreator />
@@ -64,7 +93,10 @@ export default props => {
             },
             {
               title: "考试时间",
-              dataIndex: "startAt"
+              render: (text, record) =>
+                `${new Date(record.startAt).toLocaleDateString()} ${new Date(
+                  record.startAt
+                ).toLocaleTimeString()}`
             },
             {
               title: "类型",

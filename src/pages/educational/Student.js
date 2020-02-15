@@ -16,19 +16,17 @@ export default props => {
     setVisible(!visible);
   };
 
-  const init = () => {
-    GET("/school/students", { id: props.location.query.id }).then(res => {
-      console.log(res);
-      setRaw(res.data || []);
-    });
-  };
-
   useEffect(() => {
     if (props.location.query) {
       console.log("here");
-      init();
+      GET("/educational/students", { id: props.location.query.id }).then(
+        res => {
+          console.log(res);
+          setRaw(res.data || []);
+        }
+      );
     } else {
-      props.history.push("/school/college");
+      props.history.push("/educational/subject");
     }
   }, [props]);
   return (
@@ -56,7 +54,7 @@ export default props => {
             data={raw}
             columns={[
               {
-                title: "学号",
+                title: "工号",
                 dataIndex: "id"
               },
               {

@@ -9,16 +9,28 @@ export default {
     type: {
       title: "类型",
       type: "string",
-      enum: ["大考", "练习"]
+      enum: ["true", "false"],
+      enumNames: ["大考", "小练习"]
     },
     startAt: {
       title: "开始时间",
       type: "string",
-      format: "datetime"
+      format: "dateTime"
+    },
+    endAt: {
+      title: "结束时间",
+      type: "string",
+      format: "dateTime"
     },
     paperId: {
       title: "选择试卷",
-      type: "string"
+      type: "string",
+      "ui:widget": "paperSelector"
+    },
+    range: {
+      title: "选择参考范围",
+      type: "string",
+      "ui:widget": "courseSelector"
     }
   }
 };

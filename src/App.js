@@ -1,18 +1,27 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import "./App.less";
+
+import Context from "./context";
+
 import { Layout, Menu, Icon, notification } from "antd";
+
 import RouterView from "./router";
 import routeConfig from "./router/config";
+
 import { Link, useHistory } from "react-router-dom";
+
 import { Login } from "./components/Form";
 import Pop from "./components/Pop";
+
 import { POST } from "./lib/fetch";
 
 const { Header, Content, Footer, Sider } = Layout;
 const { SubMenu } = Menu;
 
 export default props => {
-  const [userInfo, setUserInfo] = useState({});
+  // const { loginform, userInfo, setUserInfo } = useContext(Context);
+  const context = useContext(Context);
+  const { loginform, userInfo, setUserInfo } = context;
   const [collapsed, setCollapsed] = useState(false);
   const [logined, setLogined] = useState(true);
   const [active, setActive] = useState(window.location.pathname);
@@ -22,19 +31,21 @@ export default props => {
       setLogined(false);
     });
 
-    POST("/user/info").then(res => {
-      if ((res.success || false) === false) {
+    POST("/user/info")
+      .then(res => {
+        if ((res.success || false) === false) {
+          window.dispatchEvent(new Event("login"));
+        } else {
+          setUserInfo(res.data);
+        }
+      })
+      .catch(e => {
+        notification.error({
+          message: `获取用户信息失败` + JSON.stringify(e),
+          duration: 2
+        });
         window.dispatchEvent(new Event("login"));
-      } else {
-        console.log(res.data);
-        window.dispatchEvent(
-          new CustomEvent("userInfo", {
-            detail: res.data
-          })
-        );
-        setUserInfo(res.data);
-      }
-    });
+      });
   }, []);
 
   const onCollapse = collapsed => {
@@ -42,21 +53,29 @@ export default props => {
   };
 
   const login = async () => {
-    const { success = false, data = {} } = await POST("/user/login", {
-      uuid: "zuoteng.jzt",
-      password: "123456"
-    });
-    if (success) {
-      setLogined(true);
-      setUserInfo(data);
-      notification.success({
-        message: "登录成功",
-        duration: 2
+    try {
+      const { success = false, data = {} } = await POST("/user/login", {
+        uuid: loginform.data.id,
+        password: loginform.data.password
       });
-    } else {
-      notification.error({
-        message: "登录失败",
-        description: "请检查用户名和密码",
+
+      if (success) {
+        setUserInfo(data);
+        notification.success({
+          message: "登录成功",
+          duration: 2
+        });
+        setLogined(true);
+      } else {
+        notification.error({
+          message: "登录失败",
+          description: "请检查用户名和密码",
+          duration: 2
+        });
+      }
+    } catch (e) {
+      notification.success({
+        message: JSON.stringify(e),
         duration: 2
       });
     }
@@ -75,7 +94,6 @@ export default props => {
         <div
           className="logo"
           onClick={() => {
-            console.log(history);
             history.push({
               pathname: "/",
               query: userInfo
@@ -136,8 +154,9 @@ export default props => {
         <Header
           style={{
             flex: 0,
-            background: "#fff",
+            background: "var(--background-color)",
             padding: 0,
+            color: "var(--font-color)",
             display: "flex",
             flexDirection: "row-reverse"
           }}
@@ -155,7 +174,7 @@ export default props => {
           <div
             style={{
               padding: 24,
-              background: "#fff",
+              background: "var(--background-color-top)",
               height: "100%"
             }}
           >

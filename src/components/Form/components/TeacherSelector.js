@@ -30,7 +30,7 @@ export default props => {
       }
     >
       {raw.map(item => (
-        <Option value={item.UserUuid} key={item.id}>
+        <Option value={item.UserUuid} key={item.UserUuid}>
           {item.name}
         </Option>
       ))}

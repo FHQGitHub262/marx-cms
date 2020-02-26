@@ -57,7 +57,7 @@ export default props => {
             columns={[
               {
                 title: "学号",
-                dataIndex: "id"
+                dataIndex: "idNumber"
               },
               {
                 title: "姓名",

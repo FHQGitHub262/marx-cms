@@ -31,7 +31,7 @@ export default class StudentSelector extends React.Component {
     console.log(stage, stage === 3);
     return data.map(item => ({
       title: item.name,
-      key: item.id,
+      key: item.id || item.UserUuid,
       checkable: stage === 3,
       stage: stage + 1,
       isLeaf: stage === 3

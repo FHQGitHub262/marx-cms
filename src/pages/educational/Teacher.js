@@ -72,7 +72,7 @@ export default props => {
             columns={[
               {
                 title: "工号",
-                dataIndex: "id"
+                dataIndex: "idNumber"
               },
               {
                 title: "姓名",

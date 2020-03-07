@@ -52,3 +52,10 @@ export const GET = function(url, data = {}) {
     return response.json();
   });
 };
+
+export const UPLOAD = function(url, formdata) {
+  return fetch(config.suffix + "/upload", {
+    method: "POST",
+    body: formdata
+  }).then(res => res.json());
+};

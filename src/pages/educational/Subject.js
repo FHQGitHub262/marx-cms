@@ -68,12 +68,16 @@ export default props => {
       </Pop>
       <Header
         title="学科管理"
-        action={{
-          name: "添加学科",
-          handler: () => {
-            changePop();
-          }
-        }}
+        action={
+          (context.userInfo.privilege || []).indexOf("admin") >= 0
+            ? {
+                name: "添加学科",
+                handler: () => {
+                  changePop();
+                }
+              }
+            : undefined
+        }
       />
       <Container>
         {raw.map(subject => (

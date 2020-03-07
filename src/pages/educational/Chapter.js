@@ -67,12 +67,16 @@ export default props => {
         onBack={() => {
           props.history.goBack();
         }}
-        action={{
-          name: "添加章节",
-          handler: () => {
-            changePop();
-          }
-        }}
+        action={
+          (context.userInfo.privilege || []).indexOf("admin") >= 0
+            ? {
+                name: "添加章节",
+                handler: () => {
+                  changePop();
+                }
+              }
+            : undefined
+        }
       />
       <Container>
         <SortTable

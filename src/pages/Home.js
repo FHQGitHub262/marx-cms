@@ -1,7 +1,7 @@
-import React, { useEffect, useContext } from "react";
+import React, { useContext } from "react";
 import Context from "../context";
 import UserInfo from "../components/UserInfo";
-
+import { StudentImporter } from "../components/Form";
 const styles = {
   home: {
     display: "flex",
@@ -21,6 +21,7 @@ export default props => {
   return (
     <div style={styles.home}>
       <div style={styles.main}>
+        <StudentImporter />
         <UserInfo {...(context.userInfo || {})} />
       </div>
     </div>

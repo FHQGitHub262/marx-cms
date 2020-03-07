@@ -3,7 +3,7 @@ import "./App.less";
 
 import Context from "./context";
 
-import { Layout, Menu, Icon, notification } from "antd";
+import { Layout, Menu, Icon, notification, Popconfirm } from "antd";
 
 import RouterView from "./router";
 import routeConfig from "./router/config";
@@ -19,12 +19,11 @@ const { Header, Content, Footer, Sider } = Layout;
 const { SubMenu } = Menu;
 
 export default props => {
-  // const { loginform, userInfo, setUserInfo } = useContext(Context);
   const context = useContext(Context);
   const { loginform, userInfo, setUserInfo } = context;
   const [collapsed, setCollapsed] = useState(false);
   const [logined, setLogined] = useState(true);
-  const [active, setActive] = useState(window.location.pathname);
+  const [active] = useState(window.location.pathname);
   const [history] = useState(useHistory());
   useEffect(() => {
     window.addEventListener("login", () => {
@@ -36,6 +35,7 @@ export default props => {
         if ((res.success || false) === false) {
           window.dispatchEvent(new Event("login"));
         } else {
+          res.data.privilege = JSON.parse(res.data.privilege);
           setUserInfo(res.data);
         }
       })
@@ -60,6 +60,7 @@ export default props => {
       });
 
       if (success) {
+        data.privilege = JSON.parse(data.privilege);
         setUserInfo(data);
         notification.success({
           message: "登录成功",
@@ -81,6 +82,15 @@ export default props => {
     }
   };
 
+  const logout = async () => {
+    await POST("/user/logout");
+    setUserInfo({});
+    setLogined(false);
+    history.push({
+      pathname: "/",
+      query: userInfo
+    });
+  };
   return (
     <Layout style={{ minHeight: "100vh" }}>
       <Pop
@@ -100,7 +110,6 @@ export default props => {
             });
           }}
         />
-
         <Menu
           theme="dark"
           defaultOpenKeys={["test", "/school", "/examination", "/educational"]}
@@ -110,7 +119,10 @@ export default props => {
           {routeConfig.map(route => {
             if (!route.routes) {
               return (
-                route.display === true && (
+                route.display === true &&
+                (route.admin !== true ||
+                  (userInfo.privilege &&
+                    userInfo.privilege.indexOf("admin") > 0)) && (
                   <Menu.Item key={route.path}>
                     <Link to={route.path}>
                       {route.icon && <Icon type={route.icon} />}
@@ -121,25 +133,32 @@ export default props => {
               );
             } else {
               return (
-                <SubMenu
-                  key={route.path}
-                  title={
-                    <span>
-                      {route.icon && <Icon type={route.icon} />}
-                      <span>{route.name}</span>
-                    </span>
-                  }
-                >
-                  {route.routes.map(subRoutes => {
-                    return (
-                      subRoutes.display === true && (
-                        <Menu.Item key={subRoutes.path}>
-                          <Link to={subRoutes.path}>{subRoutes.name}</Link>
-                        </Menu.Item>
-                      )
-                    );
-                  })}
-                </SubMenu>
+                (route.admin !== true ||
+                  (userInfo.privilege &&
+                    userInfo.privilege.indexOf("admin") >= 0)) && (
+                  <SubMenu
+                    key={route.path}
+                    title={
+                      <span>
+                        {route.icon && <Icon type={route.icon} />}
+                        <span>{route.name}</span>
+                      </span>
+                    }
+                  >
+                    {route.routes.map(subRoutes => {
+                      return (
+                        subRoutes.display === true &&
+                        (subRoutes.admin !== true ||
+                          (userInfo.privilege &&
+                            userInfo.privilege.indexOf("admin") >= 0)) && (
+                          <Menu.Item key={subRoutes.path}>
+                            <Link to={subRoutes.path}>{subRoutes.name}</Link>
+                          </Menu.Item>
+                        )
+                      );
+                    })}
+                  </SubMenu>
+                )
               );
             }
           })}
@@ -164,10 +183,19 @@ export default props => {
           <div
             style={{
               position: "relative",
-              right: "16px"
+              right: "16px",
+              cursor: "pointer"
             }}
           >
-            {userInfo.name || ""}
+            <Popconfirm
+              placement="bottom"
+              title="确认要注销当前用户吗"
+              okText="是"
+              cancelText="否"
+              onConfirm={logout}
+            >
+              {userInfo.name || ""}
+            </Popconfirm>
           </div>
         </Header>
         <Content style={{ margin: "24px 16px 0", flex: 1 }}>

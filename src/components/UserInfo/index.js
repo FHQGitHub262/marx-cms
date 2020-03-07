@@ -14,11 +14,11 @@ export default props => {
       <h2>{props.name || ""}</h2>
       <h3>
         <label>
-          {JSON.parse(props.privilege || "[]") instanceof Array &&
-            JSON.parse(props.privilege || "[]").length > 0 &&
+          {props.privilege instanceof Array &&
+            props.privilege.length > 0 &&
             "权限："}
         </label>
-        {JSON.parse(props.privilege || "[]").join(" ")}
+        {(props.privilege || []).join(" ")}
       </h3>
     </div>
   );

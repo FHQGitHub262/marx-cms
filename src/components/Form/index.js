@@ -1,4 +1,4 @@
-import React, { useRef, useImperativeHandle, forwardRef } from "react";
+import React from "react";
 import Form from "./Form";
 
 import login from "./schema/Login";
@@ -7,6 +7,7 @@ import chapterCreator from "./schema/ChapterCreator";
 import classCreator from "./schema/ClassCreator";
 import courseCreator from "./schema/CourseCreator";
 import examCreator from "./schema/ExamCreator";
+import courseGranter from "./schema/GrantCourse";
 import majorCreator from "./schema/MajorCreator";
 import paperCreator from "./schema/PaperCreator";
 import studentAdder from "./schema/StudentAdder";
@@ -27,6 +28,9 @@ export const ClassCreator = () => (
 );
 export const CourseCreator = () => (
   <Form schema={courseCreator} formName="courseCreator" />
+);
+export const CourseGranter = () => (
+  <Form schema={courseGranter} formName="courseGranter" />
 );
 export const ExamCreator = () => (
   <Form schema={examCreator} formName="examCreator" />

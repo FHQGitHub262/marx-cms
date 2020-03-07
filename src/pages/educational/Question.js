@@ -69,12 +69,16 @@ export default props => {
         onBack={() => {
           props.history.goBack();
         }}
-        action={{
-          name: "添加题目",
-          handler: () => {
-            changePop();
-          }
-        }}
+        action={
+          (context.userInfo.privilege || []).indexOf("admin") >= 0
+            ? {
+                name: "添加题目",
+                handler: () => {
+                  changePop();
+                }
+              }
+            : undefined
+        }
       />
       <Container>
         <SortTable
@@ -110,13 +114,15 @@ export default props => {
               render: (text, record) => {
                 return (
                   <span>
-                    <Button
-                      onClick={() => {
-                        console.log(record);
-                      }}
-                    >
-                      编辑
-                    </Button>
+                    {context.userInfo.privilege.indexOf("admin") >= 0 && (
+                      <Button
+                        onClick={() => {
+                          console.log(record);
+                        }}
+                      >
+                        编辑{context.userInfo.privilege.indexOf("admin")}
+                      </Button>
+                    )}
                     <Divider type="vertical" />
                     <Button
                       onClick={() => {

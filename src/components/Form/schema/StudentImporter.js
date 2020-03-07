@@ -4,7 +4,7 @@ export default {
     id: {
       title: "上传excel文件",
       type: "string",
-      format: "image"
+      "ui:widget": "uploader"
     }
     // select: {
     //   title: "单选",

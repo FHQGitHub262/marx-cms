@@ -72,7 +72,7 @@ export default props => {
         columns={props.columns || []}
         dataSource={props.data || []}
         pagination={false}
-        rowKey={record => record.id}
+        rowKey={record => record[props.keyName] || record.id}
       />
     </div>
   );

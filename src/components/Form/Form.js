@@ -8,12 +8,14 @@ import FormRender from "form-render/lib/antd";
 import { notification } from "antd";
 import Context from "../../context";
 
+import CoursePicker from "./components/CoursePicker";
 import StudentSelector from "./components/StudentSelector";
 import QuestionSelector from "./components/QuestionSelector";
 import SubjectSelector from "./components/SubjectSelector";
 import PaperSelector from "./components/PaperSelector";
 import CourseSelector from "./components/CourseSelector";
 import TeacherSelector from "./components/TeacherSelector";
+import Uploader from "./components/Uploader";
 
 export default React.forwardRef((props, ref) => {
   const [formData, setData] = useState({});
@@ -46,12 +48,14 @@ export default React.forwardRef((props, ref) => {
       onChange={setData}
       onValidate={setValid}
       widgets={{
+        coursePicker: CoursePicker,
         studentSelector: StudentSelector,
         questionSelector: QuestionSelector,
         subjectSelector: SubjectSelector,
         paperSelector: PaperSelector,
         courseSelector: CourseSelector,
-        teacherSelector: TeacherSelector
+        teacherSelector: TeacherSelector,
+        uploader: Uploader
       }}
     />
   );

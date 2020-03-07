@@ -1,5 +1,5 @@
 import React from "react";
-import { Modal, Button } from "antd";
+import { Modal } from "antd";
 
 export default class Pop extends React.Component {
   state = {

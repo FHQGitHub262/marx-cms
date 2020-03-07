@@ -40,13 +40,15 @@ export default [
         path: "/educational/teacher",
         component: Teacher,
         name: "教师管理",
-        display: true
+        display: true,
+        admin: true
       },
       {
         path: "/educational/subject",
         component: Subject,
         name: "学科管理",
         display: true
+        // admin: true
       },
       {
         path: "/educational/course",
@@ -103,6 +105,7 @@ export default [
     path: "/school",
     name: "学籍管理",
     icon: "mobile",
+    admin: true,
     routes: [
       {
         path: "/school/college",

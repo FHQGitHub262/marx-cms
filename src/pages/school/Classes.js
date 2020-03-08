@@ -82,10 +82,10 @@ export default props => {
               title: "班级名称",
               dataIndex: "name"
             },
-            {
-              title: "人数",
-              dataIndex: "count"
-            },
+            // {
+            //   title: "人数",
+            //   dataIndex: "count"
+            // },
             {
               title: "操作",
               render: (text, record) => {

@@ -18,10 +18,10 @@ export default props => {
 
   useEffect(() => {
     if (props.location.query) {
-      console.log("here");
+      // console.log("here");
       GET("/educational/students", { id: props.location.query.id }).then(
         res => {
-          console.log(res);
+          // console.log(res);
           setRaw(res.data || []);
         }
       );
@@ -41,6 +41,9 @@ export default props => {
       </Pop>
       <Header
         title="学生管理"
+        onBack={() => {
+          props.history.goBack();
+        }}
         action={{
           name: "添加学生",
           handler: () => {
@@ -51,40 +54,43 @@ export default props => {
       <Container>
         <Row>
           <SortTable
+            keyName="UserUuid"
             data={raw}
             columns={[
               {
-                title: "工号",
-                dataIndex: "id"
+                title: "学号",
+                dataIndex: "idNumber"
               },
               {
                 title: "姓名",
                 dataIndex: "name"
-              },
-              {
-                title: "操作",
-                render: (text, record) => (
-                  <span>
-                    <Button
-                      href="#"
-                      onClick={() => {
-                        console.log(record);
-                      }}
-                    >
-                      重置密码
-                    </Button>
-                  </span>
-                )
               }
+              // {
+              //   title: "操作",
+              //   render: (text, record) => (
+              //     <span>
+              //       <Button
+              //         href="#"
+              //         onClick={() => {
+              //           console.log(record);
+              //         }}
+              //       >
+              //         重置密码
+              //       </Button>
+              //     </span>
+              //   )
+              // }
             ]}
-            actions={[
-              {
-                title: "提交",
-                handler: selected => {
-                  console.log(selected);
-                }
-              }
-            ]}
+            actions={
+              [
+                // {
+                //   title: "提交",
+                //   handler: selected => {
+                //     console.log(selected);
+                //   }
+                // }
+              ]
+            }
           />
         </Row>
       </Container>

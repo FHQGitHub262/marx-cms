@@ -79,14 +79,17 @@ export default props => {
                 )
               }
             ]}
-            actions={[
-              {
-                title: "提交",
-                handler: selected => {
-                  console.log(selected);
-                }
-              }
-            ]}
+            actions={
+              [
+                // {
+                //   title: "提交",
+                //   handler: selected => {
+                //     console.log(selected);
+                //   }
+                // }
+              ]
+            }
+            keyName="UserUuid"
           />
         </Row>
       </Container>

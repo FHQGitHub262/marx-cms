@@ -170,14 +170,16 @@ export default props => {
                 )
               }
             ]}
-            actions={[
-              {
-                title: "提交",
-                handler: selected => {
-                  console.log(selected);
-                }
-              }
-            ]}
+            actions={
+              [
+                // {
+                //   title: "提交",
+                //   handler: selected => {
+                //     console.log(selected);
+                //   }
+                // }
+              ]
+            }
             data={raw}
             keyName="UserUuid"
           />

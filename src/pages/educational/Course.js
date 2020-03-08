@@ -110,7 +110,7 @@ export default props => {
                     <Button
                       onClick={() => {
                         props.history.push({
-                          pathname: "/school/student",
+                          pathname: "/educational/student",
                           query: record
                         });
                       }}

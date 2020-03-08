@@ -31,7 +31,7 @@ export default class Pop extends React.Component {
     return (
       <div>
         <Modal
-          title="请填写表单"
+          title={this.props.title || "请填写表单"}
           visible={this.props.visible}
           onOk={this.props.handleOk || this.props.doHide}
           confirmLoading={confirmLoading}

@@ -27,7 +27,8 @@ export default class QuestionSelector extends React.Component {
     queryPayload.id = treeNode.props.eventKey;
     const { data } = await GET(api[stage], {
       ...queryPayload,
-      ...this.props.options
+      ...this.props.options,
+      forceEnabled: true
     });
     return data.map(item => ({
       title: item.title || item.name,

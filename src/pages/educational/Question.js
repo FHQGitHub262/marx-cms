@@ -4,24 +4,35 @@ import Context from "../../context";
 import Header from "../../components/Header";
 import Container from "../../components/Container";
 import SortTable from "../../components/SortTable";
-import { Divider, Button, notification } from "antd";
+import { Button, notification } from "antd";
 import Pop from "../../components/Pop";
 import { QuestionImporter } from "../../components/Form";
 import { GET, POST } from "../../lib/fetch";
 
+import Detail from "../../components/Detail/Question";
+
 export default props => {
   const [visible, setVisible] = useState(false);
+  const [detailVisible, setDetailVisible] = useState(false);
   const [raw, setRaw] = useState(undefined);
-
+  const [detail, setDetail] = useState({});
   const context = useContext(Context);
 
   const changePop = () => {
     setVisible(!visible);
   };
 
+  const showDetail = record => {
+    console.log(record);
+    setDetail(record);
+    setDetailVisible(true);
+  };
+
   const init = () => {
-    GET("/educational/questions", { id: props.location.query.id }).then(res => {
-      console.log(res);
+    GET("/educational/questions", {
+      id: props.location.query.id
+    }).then(res => {
+      // console.log(res);
       setRaw(res.data || []);
     });
   };
@@ -36,6 +47,15 @@ export default props => {
 
   return (
     <div>
+      <Pop
+        title="题目详情"
+        visible={detailVisible}
+        doHide={() => {
+          setDetailVisible(false);
+        }}
+      >
+        <Detail {...detail} />
+      </Pop>
       <Pop
         visible={visible}
         doHide={() => {
@@ -82,10 +102,12 @@ export default props => {
       />
       <Container>
         <SortTable
+          search
           columns={[
             {
               title: "题干",
-              dataIndex: "title"
+              dataIndex: "title",
+              search: "title"
             },
             {
               title: "类型",
@@ -110,23 +132,34 @@ export default props => {
               onFilter: (value, record) => record.type === value
             },
             {
+              title: "类型",
+              render: (text, record) => (record.enable ? "正常" : "禁用中"),
+              dataIndex: "enable",
+              filters: [
+                { text: "正常", value: "true" },
+                { text: "禁用中", value: "false" }
+              ],
+              // filteredValue: filteredInfo.address || null,
+              onFilter: (value, record) => String(record.enable) === value
+            },
+            {
               title: "操作",
               render: (text, record) => {
                 return (
                   <span>
-                    {context.userInfo.privilege.indexOf("admin") >= 0 && (
+                    {/* {context.userInfo.privilege.indexOf("admin") >= 0 && (
                       <Button
                         onClick={() => {
                           console.log(record);
                         }}
                       >
-                        编辑{context.userInfo.privilege.indexOf("admin")}
+                        编辑
                       </Button>
                     )}
-                    <Divider type="vertical" />
+                    <Divider type="vertical" /> */}
                     <Button
                       onClick={() => {
-                        console.log(record);
+                        showDetail(record);
                       }}
                     >
                       详情
@@ -138,9 +171,25 @@ export default props => {
           ]}
           actions={[
             {
+              title: "启用",
+              handler: v => {
+                POST("/educational/question/enable", {
+                  range: v
+                }).then(res => {
+                  console.log(res);
+                  init();
+                });
+              }
+            },
+            {
               title: "禁用",
               handler: v => {
-                console.log(v);
+                POST("/educational/question/disable", {
+                  range: v
+                }).then(res => {
+                  console.log(res);
+                  init();
+                });
               }
             }
           ]}

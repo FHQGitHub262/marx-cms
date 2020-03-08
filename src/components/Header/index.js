@@ -20,7 +20,7 @@ export default props => {
     <PageHeader
       style={{
         border: "1px solid var(--background-color)",
-        background: "var(--background-color)"
+        background: "white"
       }}
       title={props.title || "Title"}
       {...nextProps}

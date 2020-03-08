@@ -22,12 +22,23 @@ export default props => {
   const init = () => {
     if (props.location.query) {
       GET("/educational/exams").then(res => {
-        console.log(res);
+        if (res.data !== undefined) {
+          res.data = res.data.map(item => {
+            item.usageName = item.usage ? "大考" : "小考";
+            return item;
+          });
+        }
+
         setRaw(res.data || []);
       });
     } else if (props.location.pathname === "/examination/quiz") {
       GET("/educational/exams").then(res => {
-        console.log(res);
+        if (res.data !== undefined) {
+          res.data = res.data.map(item => {
+            item.usageName = item.usage ? "大考" : "小考";
+            return item;
+          });
+        }
         setRaw(res.data || []);
       });
     } else {
@@ -87,37 +98,45 @@ export default props => {
               title: "考试名称",
               dataIndex: "name"
             },
+            // {
+            //   title: "人数",
+            //   dataIndex: "count"
+            // },
             {
-              title: "人数",
-              dataIndex: "count"
-            },
-            {
-              title: "考试时间",
+              title: "开始时间",
               render: (text, record) =>
                 `${new Date(record.startAt).toLocaleDateString()} ${new Date(
                   record.startAt
                 ).toLocaleTimeString()}`
             },
             {
-              title: "类型",
-              dataIndex: "type",
-              filters: [
-                { text: "未开始", value: "before" },
-                { text: "进行中", value: "active" },
-                { text: "已结束", value: "end" }
-              ],
-              onFilter: (value, record) => record.name.includes(value)
+              title: "结束时间",
+              render: (text, record) =>
+                `${new Date(record.endAt).toLocaleDateString()} ${new Date(
+                  record.endAt
+                ).toLocaleTimeString()}`
             },
             {
-              title: "状态",
-              dataIndex: "status",
+              title: "类型",
+              dataIndex: "usageName",
               filters: [
-                { text: "未开始", value: "before" },
-                { text: "进行中", value: "active" },
-                { text: "已结束", value: "end" }
+                { text: "大考", value: "TRUE" },
+                { text: "小考", value: "FALSE" }
               ],
-              onFilter: (value, record) => record.name.includes(value)
+              onFilter: (value, record) => {
+                return String(record.usage).toUpperCase() === value;
+              }
             },
+            // {
+            //   title: "状态",
+            //   dataIndex: "status",
+            //   filters: [
+            //     { text: "未开始", value: "before" },
+            //     { text: "进行中", value: "active" },
+            //     { text: "已结束", value: "end" }
+            //   ],
+            //   onFilter: (value, record) => record.name.includes(value)
+            // },
             {
               title: "操作",
               render: (text, record) => {

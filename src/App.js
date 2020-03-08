@@ -27,6 +27,10 @@ export default props => {
   const [history] = useState(useHistory());
   useEffect(() => {
     window.addEventListener("login", () => {
+      history.push({
+        pathname: "/",
+        query: userInfo
+      });
       setLogined(false);
     });
 
@@ -36,6 +40,18 @@ export default props => {
           window.dispatchEvent(new Event("login"));
         } else {
           res.data.privilege = JSON.parse(res.data.privilege);
+          if (
+            res.data.privilege.indexOf("admin") < 0 &&
+            res.data.privilege.indexOf("teacher") < 0
+          ) {
+            logout();
+            notification.error({
+              message: "登录失败",
+              description: "请检查是否登录了学生账号",
+              duration: 2
+            });
+            return;
+          }
           setUserInfo(res.data);
         }
       })
@@ -54,6 +70,7 @@ export default props => {
 
   const login = async () => {
     try {
+      history.go("/");
       const { success = false, data = {} } = await POST("/user/login", {
         uuid: loginform.data.id,
         password: loginform.data.password
@@ -61,6 +78,17 @@ export default props => {
 
       if (success) {
         data.privilege = JSON.parse(data.privilege);
+        if (
+          data.privilege.indexOf("admin") < 0 &&
+          data.privilege.indexOf("teacher") < 0
+        ) {
+          notification.error({
+            message: "登录失败",
+            description: "请检查是否登录了学生账号",
+            duration: 2
+          });
+          return;
+        }
         setUserInfo(data);
         notification.success({
           message: "登录成功",

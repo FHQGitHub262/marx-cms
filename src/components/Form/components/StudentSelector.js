@@ -7,11 +7,38 @@ import { GET } from "../../../lib/fetch";
 const { TreeNode } = Tree;
 
 export default class StudentSelector extends React.Component {
-  state = {
-    treeData: [],
-    checkedKeys: [],
-    value: []
-  };
+  componentDidMount() {
+    try {
+      if (this.props && this.props.value.length > 0) {
+        this.setState({
+          editType: true
+        });
+      }
+    } catch (error) {
+      console.log("error", error);
+      this.setState({
+        editType: false
+      });
+    }
+    this.getData().then(data => {
+      if (this.state.editType) {
+        this.setState({
+          treeData: [...data],
+          expandedKeys: Array.from(
+            new Set([
+              ...this.state.expandedKeys,
+              ...data
+                .filter(item => item.isLeaf === false)
+                .map(item => item.key)
+            ])
+          )
+        });
+      }
+      this.setState({
+        treeData: [...data]
+      });
+    });
+  }
 
   getData = async (
     stage = 0,
@@ -28,7 +55,7 @@ export default class StudentSelector extends React.Component {
     ];
     queryPayload.id = treeNode.props.eventKey;
     const { data } = await GET(api[stage], queryPayload);
-    console.log(stage, stage === 3);
+    // console.log(stage, stage === 3);
     return data.map(item => ({
       title: item.name,
       key: item.id || item.UserUuid,
@@ -40,32 +67,53 @@ export default class StudentSelector extends React.Component {
 
   constructor(props) {
     super(props);
-    this.getData().then(data => {
-      console.log(data);
-      this.setState({
-        treeData: [...data]
-      });
-    });
+    this.state = {
+      treeData: [],
+      checkedKeys: [],
+      expandedKeys: [],
+      value: [],
+      editType: false
+    };
   }
 
   onLoadData = async treeNode =>
     new Promise(resolve => {
       if (treeNode.props.children) {
         resolve();
-        return;
       }
       this.getData(treeNode.props.stage, treeNode).then(children => {
         treeNode.props.dataRef.children = children;
-        console.log(treeNode);
-        this.setState({
-          treeData: [...this.state.treeData]
-        });
+        if (this.state.editType) {
+          const checkedAdds = [];
+          children.forEach(item => {
+            const index = this.props.value.indexOf(item.key);
+            if (index >= 0) checkedAdds.push(item.key);
+          });
+
+          this.setState({
+            treeData: [...this.state.treeData],
+            expandedKeys: Array.from(
+              new Set([
+                ...this.state.expandedKeys,
+                ...children
+                  .filter(item => item.isLeaf === false)
+                  .map(item => item.key)
+              ])
+            ),
+            checkedKeys: [...this.state.checkedKeys, ...checkedAdds]
+          });
+        } else {
+          this.setState({
+            treeData: [...this.state.treeData]
+          });
+        }
+
         resolve();
       });
     });
 
   onCheck = checkedKeys => {
-    console.log("onCheck", checkedKeys, this.state.expandedKeys);
+    // console.log("onCheck", checkedKeys, this.state.expandedKeys);
 
     this.setState(
       {
@@ -81,7 +129,7 @@ export default class StudentSelector extends React.Component {
   };
 
   onExpand = expandedKeys => {
-    console.log("onExpand", expandedKeys);
+    // console.log("onExpand", expandedKeys);
     this.setState({
       expandedKeys,
       autoExpandParent: false
@@ -111,8 +159,11 @@ export default class StudentSelector extends React.Component {
       <div>
         <Tree
           checkable
+          treeDefaultExpandAll={this.props.editType}
+          disabled={this.props.disabled}
           loadData={this.onLoadData}
           onCheck={this.onCheck}
+          expandedKeys={this.state.expandedKeys}
           checkedKeys={this.state.checkedKeys}
           onExpand={this.onExpand}
         >

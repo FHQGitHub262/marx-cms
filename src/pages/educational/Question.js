@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useMemo } from "react";
 import beforeSubmit from "../../lib/beforeSubmit";
 import Context from "../../context";
 import Header from "../../components/Header";
@@ -6,23 +6,27 @@ import Container from "../../components/Container";
 import SortTable from "../../components/SortTable";
 import { Button, notification } from "antd";
 import Pop from "../../components/Pop";
-import { QuestionImporter } from "../../components/Form";
+
 import { GET, POST } from "../../lib/fetch";
 
 import Detail from "../../components/Detail/Question";
+import { decode } from "../../lib/params";
 
-export default props => {
+export default (props) => {
   const [visible, setVisible] = useState(false);
   const [detailVisible, setDetailVisible] = useState(false);
   const [raw, setRaw] = useState(undefined);
   const [detail, setDetail] = useState({});
   const context = useContext(Context);
+  const query = useMemo(() => {
+    return decode(props.location.search);
+  }, [props]);
 
   const changePop = () => {
     setVisible(!visible);
   };
 
-  const showDetail = record => {
+  const showDetail = (record) => {
     console.log(record);
     setDetail(record);
     setDetailVisible(true);
@@ -30,15 +34,15 @@ export default props => {
 
   const init = () => {
     GET("/educational/questions", {
-      id: props.location.query.id
-    }).then(res => {
+      id: query.id,
+    }).then((res) => {
       // console.log(res);
       setRaw(res.data || []);
     });
   };
 
   useEffect(() => {
-    if (props.location.query && context.userInfo) {
+    if (decode(props.location.search) && context.userInfo) {
       init();
     } else {
       props.history.push("/educational/subject");
@@ -56,7 +60,7 @@ export default props => {
       >
         <Detail {...detail} />
       </Pop>
-      <Pop
+      {/* <Pop
         visible={visible}
         doHide={() => {
           changePop();
@@ -64,18 +68,19 @@ export default props => {
         handleOk={() => {
           if (beforeSubmit(context.questionImporter)) {
             // #TODO: 这个比较复杂，先不动
-            POST("/educational/createCourse", {
-              ...context.questionImporter.data,
-              chapter: props.location.query.id
+            console.log(context.questionImporter);
+            POST("/educational/questions/import", {
+              filename: context.questionImporter.data.id,
+              chapter: query.id
             })
               .then(res => {
-                notification.success({ message: "创建成功", duration: 2 });
+                notification.success({ message: "添加成功", duration: 2 });
                 changePop();
                 init();
               })
               .catch(e => {
                 notification.error({
-                  message: "创建出错",
+                  message: "添加出错",
                   duration: 2
                 });
               });
@@ -83,7 +88,7 @@ export default props => {
         }}
       >
         <QuestionImporter />
-      </Pop>
+      </Pop> */}
       <Header
         title="题目管理"
         onBack={() => {
@@ -95,7 +100,7 @@ export default props => {
                 name: "添加题目",
                 handler: () => {
                   changePop();
-                }
+                },
               }
             : undefined
         }
@@ -103,11 +108,16 @@ export default props => {
       <Container>
         <SortTable
           search
+          rowOptions={{
+            getCheckboxProps: (record) => ({
+              disabled: record.enable === false,
+            }),
+          }}
           columns={[
             {
               title: "题干",
               dataIndex: "title",
-              search: "title"
+              search: "title",
             },
             {
               title: "类型",
@@ -126,10 +136,10 @@ export default props => {
               filters: [
                 { text: "单选题", value: "single" },
                 { text: "多选题", value: "multi" },
-                { text: "判断题", value: "trueFalse" }
+                { text: "判断题", value: "trueFalse" },
               ],
               // filteredValue: filteredInfo.address || null,
-              onFilter: (value, record) => record.type === value
+              onFilter: (value, record) => record.type === value,
             },
             {
               title: "类型",
@@ -137,10 +147,10 @@ export default props => {
               dataIndex: "enable",
               filters: [
                 { text: "正常", value: "true" },
-                { text: "禁用中", value: "false" }
+                { text: "禁用中", value: "false" },
               ],
               // filteredValue: filteredInfo.address || null,
-              onFilter: (value, record) => String(record.enable) === value
+              onFilter: (value, record) => String(record.enable) === value,
             },
             {
               title: "操作",
@@ -166,32 +176,32 @@ export default props => {
                     </Button>
                   </span>
                 );
-              }
-            }
+              },
+            },
           ]}
           actions={[
             {
               title: "启用",
-              handler: v => {
+              handler: (v) => {
                 POST("/educational/question/enable", {
-                  range: v
-                }).then(res => {
+                  range: v,
+                }).then((res) => {
                   console.log(res);
                   init();
                 });
-              }
+              },
             },
             {
               title: "禁用",
-              handler: v => {
+              handler: (v) => {
                 POST("/educational/question/disable", {
-                  range: v
-                }).then(res => {
+                  range: v,
+                }).then((res) => {
                   console.log(res);
                   init();
                 });
-              }
-            }
+              },
+            },
           ]}
           data={raw}
         />

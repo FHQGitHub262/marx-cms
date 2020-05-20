@@ -53,6 +53,13 @@ export const GET = function(url, data = {}) {
   });
 };
 
+export const DOWNLOAD = function(url, data = {}) {
+  const saveLink = document.createElement("a");
+  saveLink.href = config.suffix + url + "?" + encode(data);
+  let e = new MouseEvent("click");
+  saveLink.dispatchEvent(e);
+};
+
 export const UPLOAD = function(url, formdata) {
   return fetch(config.suffix + "/upload", {
     method: "POST",

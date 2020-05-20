@@ -1,54 +1,52 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext, useMemo } from "react";
 
 import { Row, Button } from "antd";
+
+import Context from "../../context";
 
 import Header from "../../components/Header";
 import Container from "../../components/Container";
 import SortTable from "../../components/SortTable";
-import Pop from "../../components/Pop";
-import { StudentImporter } from "../../components/Form";
+import { decode, encode } from "../../lib/params";
+
 import { GET } from "../../lib/fetch";
 
-export default props => {
+export default (props) => {
   const [visible, setVisible] = useState(false);
+  const context = useContext(Context);
   const [raw, setRaw] = useState(undefined);
-  const changePop = () => {
-    setVisible(!visible);
-  };
+  const query = useMemo(() => {
+    return decode(props.location.search);
+  }, [props]);
 
   const init = () => {
-    GET("/school/students", { id: props.location.query.id }).then(res => {
+    GET("/school/students", { id: query.id }).then((res) => {
       console.log(res);
       setRaw(res.data || []);
     });
   };
 
   useEffect(() => {
-    if (props.location.query) {
-      console.log("here");
+    if (decode(props.location.search) && context.userInfo) {
       init();
     } else {
       props.history.push("/school/college");
     }
-  }, [props]);
+  }, []);
+
   return (
     <div>
-      <Pop
-        visible={visible}
-        doHide={() => {
-          changePop();
-        }}
-      >
-        <StudentImporter />
-      </Pop>
       <Header
         title="学生管理"
-        action={{
-          name: "添加学生",
-          handler: () => {
-            changePop();
-          }
+        onBack={() => {
+          props.history.goBack();
         }}
+        // action={{
+        //   name: "添加学生",
+        //   handler: () => {
+        //     changePop();
+        //   },
+        // }}
       />
       <Container>
         <Row>
@@ -57,11 +55,11 @@ export default props => {
             columns={[
               {
                 title: "学号",
-                dataIndex: "idNumber"
+                dataIndex: "idNumber",
               },
               {
                 title: "姓名",
-                dataIndex: "name"
+                dataIndex: "name",
               },
               {
                 title: "操作",
@@ -76,8 +74,8 @@ export default props => {
                       重置密码
                     </Button>
                   </span>
-                )
-              }
+                ),
+              },
             ]}
             actions={
               [

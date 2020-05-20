@@ -9,11 +9,14 @@ import { Divider, Button, notification } from "antd";
 import Pop from "../../components/Pop";
 import { ExamCreator } from "../../components/Form";
 import { GET, POST } from "../../lib/fetch";
+import dateFormat from "../../lib/dateFormat";
 
-export default props => {
+export default (props) => {
   const [visible, setVisible] = useState(false);
+  const [editVisible, setEditVisible] = useState(false);
   const [raw, setRaw] = useState(undefined);
   const context = useContext(Context);
+  const [active, setActive] = useState("");
 
   const changePop = () => {
     setVisible(!visible);
@@ -21,9 +24,9 @@ export default props => {
 
   const init = () => {
     if (props.location.query) {
-      GET("/educational/exams").then(res => {
+      GET("/educational/exams").then((res) => {
         if (res.data !== undefined) {
-          res.data = res.data.map(item => {
+          res.data = res.data.map((item) => {
             item.usageName = item.usage ? "大考" : "小考";
             return item;
           });
@@ -32,9 +35,9 @@ export default props => {
         setRaw(res.data || []);
       });
     } else if (props.location.pathname === "/examination/quiz") {
-      GET("/educational/exams").then(res => {
+      GET("/educational/exams").then((res) => {
         if (res.data !== undefined) {
-          res.data = res.data.map(item => {
+          res.data = res.data.map((item) => {
             item.usageName = item.usage ? "大考" : "小考";
             return item;
           });
@@ -46,32 +49,76 @@ export default props => {
     }
   };
 
+  const openEdit = async (record) => {
+    const { data } = await GET("/educational/exam/detail", {
+      id: record.id,
+    });
+    context.update_examCreator({
+      ...record,
+      paperId: record.PaperId,
+      startAt: dateFormat(new Date(record.startAt), "yyyy-MM-dd hh:mm:ss"),
+      endAt: dateFormat(new Date(record.endAt), "yyyy-MM-dd hh:mm:ss"),
+      range: data,
+    });
+
+    setEditVisible(true);
+  };
+
   useEffect(() => {
     init();
   }, []);
   return (
     <div>
       <Pop
+        destroyOnClose
+        visible={editVisible}
+        doHide={() => {
+          setEditVisible(false);
+          context.update_examCreator({});
+        }}
+        handleOk={() => {
+          if (beforeSubmit(context.examCreator)) {
+            POST("/educational/updateExam", {
+              ...context.examCreator.data,
+              id: active,
+            })
+              .then((res) => {
+                notification.success({ message: "修改成功", duration: 2 });
+                setEditVisible(false);
+                init();
+              })
+              .catch((e) => {
+                notification.error({
+                  message: "修改出错",
+                  duration: 2,
+                });
+              });
+          } else {
+            console.log("else");
+          }
+        }}
+      >
+        <ExamCreator />
+      </Pop>
+      <Pop
         visible={visible}
         doHide={() => {
           changePop();
         }}
         handleOk={() => {
-          console.log(context.examCreator);
           if (beforeSubmit(context.examCreator)) {
-            console.log(context.examCreator);
             POST("/educational/createExam", {
-              ...context.examCreator.data
+              ...context.examCreator.data,
             })
-              .then(res => {
+              .then((res) => {
                 notification.success({ message: "创建成功", duration: 2 });
                 changePop();
                 init();
               })
-              .catch(e => {
+              .catch((e) => {
                 notification.error({
                   message: "创建出错",
-                  duration: 2
+                  duration: 2,
                 });
               });
           }
@@ -88,7 +135,7 @@ export default props => {
           name: "添加测验",
           handler: () => {
             changePop();
-          }
+          },
         }}
       />
       <Container>
@@ -96,7 +143,8 @@ export default props => {
           columns={[
             {
               title: "考试名称",
-              dataIndex: "name"
+              dataIndex: "name",
+              search: "name",
             },
             // {
             //   title: "人数",
@@ -107,25 +155,25 @@ export default props => {
               render: (text, record) =>
                 `${new Date(record.startAt).toLocaleDateString()} ${new Date(
                   record.startAt
-                ).toLocaleTimeString()}`
+                ).toLocaleTimeString()}`,
             },
             {
               title: "结束时间",
               render: (text, record) =>
                 `${new Date(record.endAt).toLocaleDateString()} ${new Date(
                   record.endAt
-                ).toLocaleTimeString()}`
+                ).toLocaleTimeString()}`,
             },
             {
               title: "类型",
               dataIndex: "usageName",
               filters: [
                 { text: "大考", value: "TRUE" },
-                { text: "小考", value: "FALSE" }
+                { text: "小考", value: "FALSE" },
               ],
               onFilter: (value, record) => {
                 return String(record.usage).toUpperCase() === value;
-              }
+              },
             },
             // {
             //   title: "状态",
@@ -144,7 +192,8 @@ export default props => {
                   <span>
                     <Button
                       onClick={() => {
-                        console.log(record);
+                        setActive(record.id);
+                        openEdit(record);
                       }}
                     >
                       编辑
@@ -154,7 +203,7 @@ export default props => {
                       onClick={() => {
                         props.history.push({
                           pathname: "/educational/examinfo",
-                          query: record
+                          query: record,
                         });
                       }}
                     >
@@ -162,8 +211,8 @@ export default props => {
                     </Button>
                   </span>
                 );
-              }
-            }
+              },
+            },
           ]}
           data={raw}
         />

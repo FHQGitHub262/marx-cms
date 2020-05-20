@@ -2,7 +2,7 @@ import React from "react";
 import "./index.less";
 import { Card, Col, Button } from "antd";
 
-export const CollegeCard = props => {
+export const CollegeCard = (props) => {
   return (
     <Col xs={24} sm={12} md={6}>
       <Card
@@ -12,7 +12,7 @@ export const CollegeCard = props => {
         actions={[
           <Button onClick={() => (props.handler || (() => {}))(props)}>
             查看
-          </Button>
+          </Button>,
         ]}
       >
         {props.majorNum !== undefined && <p>专业数：{props.majorNum}</p>}
@@ -22,7 +22,7 @@ export const CollegeCard = props => {
   );
 };
 
-export const MajorCard = props => {
+export const MajorCard = (props) => {
   return (
     <Col xs={24} sm={12} md={6}>
       <Card
@@ -32,7 +32,7 @@ export const MajorCard = props => {
         actions={[
           <Button onClick={() => (props.handler || (() => {}))(props)}>
             查看
-          </Button>
+          </Button>,
         ]}
       >
         {props.majorName}
@@ -42,7 +42,7 @@ export const MajorCard = props => {
   );
 };
 
-export const SubjectCard = props => {
+export const SubjectCard = (props) => {
   return (
     <Col xs={24} sm={12} md={6}>
       <Card
@@ -69,10 +69,10 @@ export const SubjectCard = props => {
             }}
           >
             查看章节
-          </Button>
+          </Button>,
         ]}
       >
-        {props.majorNum !== undefined && <p>专业数：{props.majorNum}</p>}
+        {props.majorNum !== undefined && <p>章节数：{props.majorNum}</p>}
         {/* {props.questionNum && <p>题目数：{props.questionNum}</p>} */}
       </Card>
     </Col>

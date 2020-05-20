@@ -12,20 +12,20 @@ import Context from "./context";
 const Component = () => {
   const [loginform, update_loginform] = useState({});
   const [userInfo, setUserInfo] = useState({});
-  // const [login, update_login] = useState([]);
-  const [collegeCreator, update_collegeCreator] = useState([]);
-  const [courseGranter, update_courseGranter] = useState([]);
-  const [chapterCreator, update_chapterCreator] = useState([]);
-  const [classCreator, update_classCreator] = useState([]);
-  const [courseCreator, update_courseCreator] = useState([]);
-  const [examCreator, update_examCreator] = useState([]);
-  const [majorCreator, update_majorCreator] = useState([]);
-  const [paperCreator, update_paperCreator] = useState([]);
-  const [studentAdder, update_studentAdder] = useState([]);
-  const [studentImporter, update_studentImporter] = useState([]);
-  const [subjectCreator, update_subjectCreator] = useState([]);
-  const [teacherCreator, update_teacherCreator] = useState([]);
-  const [questionImporter, update_questionImporter] = useState([]);
+  // const [login, update_login] = useState({});
+  const [collegeCreator, update_collegeCreator] = useState({});
+  const [courseGranter, update_courseGranter] = useState({});
+  const [chapterCreator, update_chapterCreator] = useState({});
+  const [classCreator, update_classCreator] = useState({});
+  const [courseCreator, update_courseCreator] = useState({});
+  const [examCreator, update_examCreator] = useState({});
+  const [majorCreator, update_majorCreator] = useState({});
+  const [paperCreator, update_paperCreator] = useState({});
+  const [studentAdder, update_studentAdder] = useState({});
+  const [studentImporter, update_studentImporter] = useState({});
+  const [subjectCreator, update_subjectCreator] = useState({});
+  const [teacherCreator, update_teacherCreator] = useState({});
+  const [questionImporter, update_questionImporter] = useState({});
 
   return (
     <ConfigProvider locale={zhCN}>

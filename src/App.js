@@ -24,7 +24,7 @@ export default props => {
   const [collapsed, setCollapsed] = useState(false);
   const [logined, setLogined] = useState(true);
   const [active] = useState(window.location.pathname);
-  const [history] = useState(useHistory());
+  const history = useHistory();
   useEffect(() => {
     window.addEventListener("login", () => {
       history.push({
@@ -70,7 +70,7 @@ export default props => {
 
   const login = async () => {
     try {
-      history.go("/");
+      history.push("/");
       const { success = false, data = {} } = await POST("/user/login", {
         uuid: loginform.data.id,
         password: loginform.data.password

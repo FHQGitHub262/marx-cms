@@ -4,7 +4,7 @@ import { Table, Button, Alert, Divider } from "antd";
 import { Input, Icon } from "antd";
 import Highlighter from "react-highlight-words";
 
-export default props => {
+export default (props) => {
   let [selectedRowKeys, setSelectedRowKeys] = useState([]);
   let [loading, setLoading] = useState(!Boolean(props.data));
   const [search, setSearch] = useState({});
@@ -25,18 +25,18 @@ export default props => {
     };
   }, [props.data]);
 
-  const getColumnSearchProps = dataIndex => ({
+  const getColumnSearchProps = (dataIndex) => ({
     filterDropdown: ({
       setSelectedKeys,
       selectedKeys,
       confirm,
-      clearFilters
+      clearFilters,
     }) => (
       <div style={{ padding: 8 }}>
         <Input
           placeholder={`输入关键词`}
           value={selectedKeys[0]}
-          onChange={e =>
+          onChange={(e) =>
             setSelectedKeys(e.target.value ? [e.target.value] : [])
           }
           onPressEnter={() => handleSearch(selectedKeys, confirm, dataIndex)}
@@ -60,21 +60,18 @@ export default props => {
         </Button>
       </div>
     ),
-    filterIcon: filtered => (
+    filterIcon: (filtered) => (
       <Icon type="search" style={{ color: filtered ? "#1890ff" : undefined }} />
     ),
     onFilter: (value, record) =>
-      record[dataIndex]
-        .toString()
-        .toLowerCase()
-        .includes(value.toLowerCase()),
-    onFilterDropdownVisibleChange: visible => {
+      record[dataIndex].toString().toLowerCase().includes(value.toLowerCase()),
+    onFilterDropdownVisibleChange: (visible) => {
       if (visible) {
         // console.log(visible);
         // setTimeout(() => search.searchInput.select());
       }
     },
-    render: text =>
+    render: (text) =>
       search.searchedColumn === dataIndex ? (
         <Highlighter
           highlightStyle={{ backgroundColor: "#ffc069", padding: 0 }}
@@ -84,18 +81,18 @@ export default props => {
         />
       ) : (
         text
-      )
+      ),
   });
 
   const handleSearch = (selectedKeys, confirm, dataIndex) => {
     confirm();
     setSearch({
       searchText: selectedKeys[0],
-      searchedColumn: dataIndex
+      searchedColumn: dataIndex,
     });
   };
 
-  const handleReset = clearFilters => {
+  const handleReset = (clearFilters) => {
     clearFilters();
     setSearch({ searchText: "" });
   };
@@ -142,23 +139,24 @@ export default props => {
       <Table
         loading={loading}
         rowSelection={{
+          ...(props.rowOptions || {}),
           selectedRowKeys,
-          onChange: nextSelected => {
+          onChange: (nextSelected) => {
             console.log("selectedRowKeys changed: ", nextSelected);
             setSelectedRowKeys(nextSelected);
-          }
+          },
         }}
-        columns={(props.columns || []).map(item => {
+        columns={(props.columns || []).map((item) => {
           if (item.search) {
             return {
               ...item,
-              ...getColumnSearchProps(item.search)
+              ...getColumnSearchProps(item.search),
             };
           } else return item;
         })}
         dataSource={props.data || []}
         pagination={false}
-        rowKey={record => record[props.keyName] || record.id}
+        rowKey={(record) => record[props.keyName] || record.id}
       />
     </div>
   );

@@ -2,7 +2,7 @@ import React, {
   useState,
   useEffect,
   useContext,
-  useImperativeHandle
+  useImperativeHandle,
 } from "react";
 import FormRender from "form-render/lib/antd";
 import { notification } from "antd";
@@ -16,11 +16,13 @@ import PaperSelector from "./components/PaperSelector";
 import CourseSelector from "./components/CourseSelector";
 import TeacherSelector from "./components/TeacherSelector";
 import Uploader from "./components/Uploader";
+import QuestionLimiter from "./components/QuestionLimiter";
+import DifficultSlider from "./components/DifficultSlider";
 
 export default React.forwardRef((props, ref) => {
-  const [formData, setData] = useState({});
-  const [valid, setValid] = useState([]);
   const context = useContext(Context);
+  const [formData, setData] = useState(context[props.formName] || {});
+  const [valid, setValid] = useState([]);
   const onSubmit = () => {
     // valid 是校验判断的数组，valid 长度为 0 代表校验全部通过
     if (valid.length > 0) {
@@ -29,13 +31,13 @@ export default React.forwardRef((props, ref) => {
     return [valid.length === 0, formData];
   };
   useImperativeHandle(ref, () => ({
-    submit: onSubmit
+    submit: onSubmit,
   }));
 
   useEffect(() => {
     context["update_" + (props.formName || "login")]({
       data: formData,
-      valid
+      valid,
     });
     // console.log(context, formData);
   }, [formData, valid]);
@@ -55,7 +57,9 @@ export default React.forwardRef((props, ref) => {
         paperSelector: PaperSelector,
         courseSelector: CourseSelector,
         teacherSelector: TeacherSelector,
-        uploader: Uploader
+        uploader: Uploader,
+        questionLimiter: QuestionLimiter,
+        difficultSlider: DifficultSlider,
       }}
     />
   );

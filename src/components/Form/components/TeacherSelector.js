@@ -4,6 +4,7 @@ import { GET } from "../../../lib/fetch";
 const { Option } = Select;
 
 export default props => {
+  console.log(props);
   const [raw, setRaw] = useState([]);
 
   const onChange = value => {
@@ -24,6 +25,7 @@ export default props => {
       style={{ width: "100%" }}
       placeholder="选择教师"
       optionFilterProp="children"
+      defaultValue={props.value}
       onChange={onChange}
       filterOption={(input, option) =>
         option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0

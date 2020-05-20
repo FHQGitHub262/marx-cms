@@ -25,6 +25,7 @@ export default props => {
       placeholder="选择学科"
       optionFilterProp="children"
       onChange={onChange}
+      defaultValue={[props.value]}
       filterOption={(input, option) =>
         option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
       }

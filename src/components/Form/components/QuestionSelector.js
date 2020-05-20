@@ -6,70 +6,167 @@ import { GET } from "../../../lib/fetch";
 const { TreeNode } = Tree;
 
 export default class QuestionSelector extends React.Component {
-  state = {
-    treeData: [],
-    checkedKeys: [],
-    value: []
-  };
+  componentDidUpdate(props) {
+    if (props.options.forExam !== this.state.forExam) {
+      this.setState({
+        treeData: [],
+        checkedKeys: [],
+        expandedKeys: [],
+        value: [],
+        loadedKeys: [],
+        editType: false,
+        forExam: props.options.forExam,
+      });
+      try {
+        if (this.props.value.length > 0) {
+          this.setState({
+            editType: true,
+          });
+        }
+      } catch (error) {
+        console.log("error", error);
+        this.setState({
+          editType: false,
+        });
+      }
+      this.getData().then((data) => {
+        if (this.state.editType) {
+          this.setState({
+            treeData: [...data],
+            expandedKeys: Array.from(
+              new Set([
+                ...this.state.expandedKeys,
+                ...data
+                  .filter((item) => item.isLeaf === false)
+                  .map((item) => item.key),
+              ])
+            ),
+          });
+        }
+        this.setState({
+          treeData: [...data],
+        });
+      });
+    }
+  }
 
+  componentDidMount() {
+    try {
+      if (this.props.value.length > 0) {
+        this.setState({
+          editType: true,
+        });
+      }
+    } catch (error) {
+      console.log("error", error);
+      this.setState({
+        editType: false,
+      });
+    }
+    this.getData().then((data) => {
+      if (this.state.editType) {
+        this.setState({
+          treeData: [...data],
+          expandedKeys: Array.from(
+            new Set([
+              ...this.state.expandedKeys,
+              ...data
+                .filter((item) => item.isLeaf === false)
+                .map((item) => item.key),
+            ])
+          ),
+        });
+      }
+      this.setState({
+        treeData: [...data],
+      });
+    });
+  }
   getData = async (
     stage = 0,
     treeNode = {
-      props: {}
+      props: {},
     }
   ) => {
     let queryPayload = {};
     const api = [
       "/educational/subjects",
       "/educational/chapters",
-      "/educational/questions"
+      "/educational/questions",
     ];
     queryPayload.id = treeNode.props.eventKey;
     const { data } = await GET(api[stage], {
       ...queryPayload,
       ...this.props.options,
-      forceEnabled: true
+      forceEnabled: true,
     });
-    return data.map(item => ({
+    return data.map((item) => ({
       title: item.title || item.name,
       key: item.id,
       checkable: stage === 2,
       stage: stage + 1,
-      isLeaf: stage === 2
+      isLeaf: stage === 2,
     }));
   };
 
   constructor(props) {
     super(props);
-    this.getData().then(data => {
-      this.setState({
-        treeData: [...data]
-      });
-    });
+    this.state = {
+      treeData: [],
+      checkedKeys: [],
+      expandedKeys: [],
+      value: [],
+      editType: false,
+      loadedKeys: [],
+      forExam: props.options.forExam,
+    };
   }
 
-  onLoadData = async treeNode =>
-    new Promise(resolve => {
+  onLoadData = async (treeNode) =>
+    new Promise((resolve) => {
+      console.log(treeNode);
       if (treeNode.props.children) {
         resolve();
-        return;
       }
-      this.getData(treeNode.props.stage, treeNode).then(children => {
+
+      this.getData(treeNode.props.stage, treeNode).then((children) => {
         treeNode.props.dataRef.children = children;
-        this.setState({
-          treeData: [...this.state.treeData]
-        });
+        if (this.state.editType) {
+          const checkedAdds = [];
+          children.forEach((item) => {
+            const index = this.props.value.indexOf(item.key);
+            if (index >= 0) checkedAdds.push(item.key);
+          });
+
+          this.setState({
+            treeData: [...this.state.treeData],
+            expandedKeys: Array.from(
+              new Set([
+                ...this.state.expandedKeys,
+                ...children
+                  .filter((item) => item.isLeaf === false)
+                  .map((item) => item.key),
+              ])
+            ),
+            checkedKeys: [...this.state.checkedKeys, ...checkedAdds],
+          });
+        } else {
+          this.setState({
+            treeData: [...this.state.treeData],
+          });
+        }
+
         resolve();
       });
     });
 
-  onCheck = checkedKeys => {
+  onCheck = (checkedKeys) => {
     this.setState(
       {
         checkedKeys,
         value: checkedKeys.filter(
-          item => this.state.expandedKeys.indexOf(item) < 0
-        )
+          (item) => this.state.expandedKeys.indexOf(item) < 0
+        ),
       },
       () => {
         (this.props.onChange || (() => {}))(this.props.name, this.state.value);
@@ -77,15 +174,21 @@ export default class QuestionSelector extends React.Component {
     );
   };
 
-  onExpand = expandedKeys => {
+  onExpand = (expandedKeys) => {
     this.setState({
       expandedKeys,
-      autoExpandParent: false
+      autoExpandParent: true,
     });
   };
 
-  renderTreeNodes = data =>
-    data.map(item => {
+  onLoad = (loadedKeys) => {
+    this.setState({
+      loadedKeys: [...this.state.loadedKeys, loadedKeys],
+    });
+  };
+
+  renderTreeNodes = (data) =>
+    data.map((item) => {
       if (item.children) {
         return (
           <TreeNode
@@ -106,9 +209,12 @@ export default class QuestionSelector extends React.Component {
       <div>
         <Tree
           checkable
+          treeDefaultExpandAll={this.props.editType}
           disabled={this.props.disabled}
           loadData={this.onLoadData}
+          loadedKeys={this.state.loadedKeys}
           onCheck={this.onCheck}
+          expandedKeys={this.state.expandedKeys}
           checkedKeys={this.state.checkedKeys}
           onExpand={this.onExpand}
         >

@@ -9,8 +9,9 @@ import Pop from "../../components/Pop";
 import { SubjectCreator } from "../../components/Form";
 import { GET, POST } from "../../lib/fetch";
 import { notification } from "antd";
+import { encode } from "../../lib/params";
 
-export default props => {
+export default (props) => {
   const [visible, setVisible] = useState(false);
   const [raw, setRaw] = useState([]);
   const context = useContext(Context);
@@ -25,15 +26,17 @@ export default props => {
     }
   }, []);
 
-  const handleCourse = item => {
-    props.history.push({ pathname: "/educational/course", query: item });
+  const handleCourse = (item) => {
+    props.history.push("/educational/course" + encode(item));
+    // props.history.push({ pathname: "/educational/course", query: item });
   };
-  const handleChapter = item => {
-    props.history.push({ pathname: "/educational/chapter", query: item });
+  const handleChapter = (item) => {
+    props.history.push("/educational/chapter" + encode(item));
+    // props.history.push({ pathname: "/educational/chapter", query: item });
   };
 
   const init = () => {
-    GET("/educational/subjects", { id: 1 }).then(res => {
+    GET("/educational/subjects", { id: 1 }).then((res) => {
       // console.log(res);
       setRaw(res.data || []);
     });
@@ -47,15 +50,15 @@ export default props => {
           // console.log(context.subjectCreator);
           if (beforeSubmit(context.subjectCreator)) {
             POST("/educational/createSubject", context.subjectCreator.data)
-              .then(res => {
+              .then((res) => {
                 notification.success({ message: "创建成功", duration: 2 });
                 changePop();
                 init();
               })
-              .catch(e => {
+              .catch((e) => {
                 notification.error({
                   message: "创建出错",
-                  duration: 2
+                  duration: 2,
                 });
               });
           }
@@ -74,13 +77,13 @@ export default props => {
                 name: "添加学科",
                 handler: () => {
                   changePop();
-                }
+                },
               }
             : undefined
         }
       />
       <Container>
-        {raw.map(subject => (
+        {raw.map((subject) => (
           <SubjectCard
             id={subject.id}
             key={subject.id}

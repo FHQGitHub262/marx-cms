@@ -3,6 +3,7 @@ import beforeSubmit from "../../lib/beforeSubmit";
 import Context from "../../context";
 
 import { Row } from "antd";
+import { encode } from "../../lib/params";
 
 import { CollegeCard } from "../../components/Card";
 import Header from "../../components/Header";
@@ -12,7 +13,7 @@ import { CollegeCreator } from "../../components/Form";
 import { GET, POST } from "../../lib/fetch";
 import { notification } from "antd";
 
-export default props => {
+export default (props) => {
   const [visible, setVisible] = useState(false);
   const [raw, setRaw] = useState([]);
   const changePop = () => {
@@ -21,7 +22,7 @@ export default props => {
   const context = useContext(Context);
 
   const init = () => {
-    GET("/school/colleges", { id: 1 }).then(res => {
+    GET("/school/colleges", { id: 1 }).then((res) => {
       console.log(res);
       setRaw(res.data || []);
     });
@@ -44,15 +45,15 @@ export default props => {
           // console.log(context.subjectCreator);
           if (beforeSubmit(context.collegeCreator)) {
             POST("/school/createCollege", context.collegeCreator.data)
-              .then(res => {
+              .then((res) => {
                 notification.success({ message: "创建成功", duration: 2 });
                 changePop();
                 init();
               })
-              .catch(e => {
+              .catch((e) => {
                 notification.error({
                   message: "创建出错",
-                  duration: 2
+                  duration: 2,
                 });
               });
           }
@@ -66,23 +67,25 @@ export default props => {
           name: "添加学院",
           handler: () => {
             changePop();
-          }
+          },
         }}
       />
       <Container>
         <Row>
-          {raw.map(college => (
+          {raw.map((college) => (
             <CollegeCard
               key={college.id}
               id={college.id}
               collegeName={college.name}
               majorNum={college.majorNum}
               classNum={college.classNum}
-              handler={item => {
-                props.history.push({
-                  pathname: "/school/major",
-                  query: item
-                });
+              handler={(item) => {
+                // props.history.push({
+                //   pathname: "/school/major",
+                //   query: item,
+                // });
+
+                props.history.push("/school/major" + encode(item));
               }}
             />
           ))}

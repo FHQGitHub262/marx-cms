@@ -25,7 +25,8 @@ export default {
     paperId: {
       title: "选择试卷",
       type: "string",
-      "ui:widget": "paperSelector"
+      "ui:widget": "paperSelector",
+      "ui:disabled": FormData => FormData.type === "true"
     },
     range: {
       title: "选择参考范围",

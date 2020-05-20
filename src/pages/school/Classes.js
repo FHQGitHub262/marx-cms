@@ -1,5 +1,6 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useMemo } from "react";
 import beforeSubmit from "../../lib/beforeSubmit";
+
 import Context from "../../context";
 
 import Header from "../../components/Header";
@@ -9,24 +10,30 @@ import { Divider, Button, notification } from "antd";
 import Pop from "../../components/Pop";
 import { ClassCreator } from "../../components/Form";
 import { GET, POST } from "../../lib/fetch";
+import { decode, encode } from "../../lib/params";
 
-export default props => {
+export default (props) => {
   const [visible, setVisible] = useState(false);
+
   const [raw, setRaw] = useState(undefined);
   const context = useContext(Context);
+  const query = useMemo(() => {
+    return decode(props.location.search);
+  }, [props]);
+
   const changePop = () => {
     setVisible(!visible);
   };
 
   const init = () => {
-    GET("/school/classes", { id: props.location.query.id }).then(res => {
+    GET("/school/classes", { id: query.id }).then((res) => {
       console.log(res);
       setRaw(res.data || []);
     });
   };
 
   useEffect(() => {
-    if (props.location.query && context.userInfo) {
+    if (decode(props.location.search) && context.userInfo) {
       init();
     } else {
       props.history.push("/school/college");
@@ -44,17 +51,17 @@ export default props => {
           if (beforeSubmit(context.classCreator)) {
             POST("/school/createClass", {
               ...context.classCreator.data,
-              major: props.location.query.id
+              major: query.id,
             })
-              .then(res => {
+              .then((res) => {
                 notification.success({ message: "创建成功", duration: 2 });
                 changePop();
                 init();
               })
-              .catch(e => {
+              .catch((e) => {
                 notification.error({
                   message: "创建出错",
-                  duration: 2
+                  duration: 2,
                 });
               });
           }
@@ -67,12 +74,11 @@ export default props => {
         onBack={() => {
           props.history.goBack();
         }}
-        action={{
-          name: "添加班级",
-          handler: () => {
-            changePop();
-          }
-        }}
+        actions={[
+          <Button onClick={changePop} key="0">
+            手动添加班级
+          </Button>,
+        ]}
       />
       <Container>
         <SortTable
@@ -80,7 +86,7 @@ export default props => {
           columns={[
             {
               title: "班级名称",
-              dataIndex: "name"
+              dataIndex: "name",
             },
             // {
             //   title: "人数",
@@ -101,18 +107,15 @@ export default props => {
                     <Divider type="vertical" />
                     <Button
                       onClick={() => {
-                        props.history.push({
-                          pathname: "/school/student",
-                          query: record
-                        });
+                        props.history.push("/school/student" + encode(record));
                       }}
                     >
                       详情
                     </Button>
                   </span>
                 );
-              }
-            }
+              },
+            },
           ]}
         />
       </Container>

@@ -23,13 +23,13 @@ export default [
     path: "/",
     name: "首页",
     icon: "desktop",
-    component: Home
+    component: Home,
   },
   {
     path: "/instruction",
     name: "教学管理",
     icon: "desktop",
-    component: Home
+    component: Home,
   },
   {
     path: "/educational",
@@ -41,46 +41,46 @@ export default [
         component: Teacher,
         name: "教师管理",
         display: true,
-        admin: true
+        admin: true,
       },
       {
         path: "/educational/subject",
         component: Subject,
         name: "学科管理",
-        display: true
+        display: true,
         // admin: true
       },
       {
         path: "/educational/course",
         component: Course,
-        name: "课程管理"
+        name: "课程管理",
       },
       {
         path: "/educational/student",
         component: CourseStudent,
-        name: "课程管理"
+        name: "课程管理",
       },
       {
         path: "/educational/exam",
         component: Exam,
-        name: "测验管理"
+        name: "测验管理",
       },
       {
         path: "/educational/examinfo",
         component: ExamInfo,
-        name: "考试信息"
+        name: "考试信息",
       },
       {
         path: "/educational/chapter",
         component: Chapter,
-        name: "章节管理"
+        name: "章节管理",
       },
       {
         path: "/educational/question",
         component: Question,
-        name: "题目管理"
-      }
-    ]
+        name: "题目管理",
+      },
+    ],
   },
   {
     path: "/examination",
@@ -88,18 +88,18 @@ export default [
     icon: "desktop",
     routes: [
       {
-        path: "/examination/quiz",
-        name: "测验管理",
-        component: Exam,
-        display: true
-      },
-      {
         path: "/examination/paper",
         name: "试卷管理",
         component: Paper,
-        display: true
-      }
-    ]
+        display: true,
+      },
+      {
+        path: "/examination/quiz",
+        name: "测验管理",
+        component: Exam,
+        display: true,
+      },
+    ],
   },
   {
     path: "/school",
@@ -111,23 +111,23 @@ export default [
         path: "/school/college",
         name: "学院一览",
         component: College,
-        display: true
+        display: true,
       },
       {
         path: "/school/major",
         name: "专业管理",
-        component: Major
+        component: Major,
       },
       {
         path: "/school/class",
         name: "班级管理",
-        component: Classes
+        component: Classes,
       },
       {
         path: "/school/student",
         name: "学生管理",
-        component: Student
-      }
-    ]
-  }
+        component: Student,
+      },
+    ],
+  },
 ];

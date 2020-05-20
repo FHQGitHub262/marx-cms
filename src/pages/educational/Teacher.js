@@ -9,7 +9,7 @@ import { TeacherCreator, CourseGranter } from "../../components/Form";
 import { GET, POST } from "../../lib/fetch";
 import beforeSubmit from "../../lib/beforeSubmit";
 
-export default props => {
+export default (props) => {
   const [visible, setVisible] = useState(false);
   const [grantVisible, setGrantVisible] = useState(false);
   const [raw, setRaw] = useState(undefined);
@@ -22,14 +22,14 @@ export default props => {
     setGrantVisible(!grantVisible);
   };
   const init = () => {
-    GET("/educational/teachers", { id: 1 }).then(res => {
+    GET("/educational/teachers", { id: 1 }).then((res) => {
       // console.log(res);
       setRaw(res.data || []);
     });
   };
   useEffect(() => {
     if (Object.keys(context.userInfo).length > 0) {
-      GET("/educational/teachers", { id: 1 }).then(res => {
+      GET("/educational/teachers", { id: 1 }).then((res) => {
         // console.log(res);
         setRaw(res.data || []);
       });
@@ -38,8 +38,8 @@ export default props => {
     }
   }, [context.userInfo]);
 
-  const resetPassword = record => {
-    POST("/user/resetPassword", record).then(res => {
+  const resetPassword = (record) => {
+    POST("/user/resetPassword", record).then((res) => {
       console.log(res);
     });
   };
@@ -55,17 +55,17 @@ export default props => {
         handleOk={() => {
           if (beforeSubmit(context.teacherCreator)) {
             POST("/educational/createTeacher", context.teacherCreator.data)
-              .then(res => {
+              .then((res) => {
                 changePop();
                 notification.success({
-                  message: "创建成功"
+                  message: "创建成功",
                 });
                 init();
               })
-              .catch(e => {
+              .catch((e) => {
                 notification.error({
                   message: "创建失败",
-                  duration: 2
+                  duration: 2,
                 });
               });
           }
@@ -84,15 +84,15 @@ export default props => {
             console.log(context.courseGranter, active);
             POST("/educational/grantCourse", {
               teacher: [active.UserUuid],
-              course: context.courseGranter.data.courseId
+              course: context.courseGranter.data.courseId,
             }).then(({ success }) => {
               if (success) {
                 notification.success({
-                  message: "授权成功"
+                  message: "授权成功",
                 });
               } else {
                 notification.error({
-                  message: "授权失败"
+                  message: "授权失败",
                 });
               }
               changeGrantPop();
@@ -109,7 +109,7 @@ export default props => {
           name: "添加教师",
           handler: () => {
             changePop();
-          }
+          },
         }}
       />
       <Container>
@@ -118,11 +118,11 @@ export default props => {
             columns={[
               {
                 title: "工号",
-                dataIndex: "idNumber"
+                dataIndex: "idNumber",
               },
               {
                 title: "姓名",
-                dataIndex: "name"
+                dataIndex: "name",
               },
               {
                 title: "操作",
@@ -148,16 +148,17 @@ export default props => {
                     <Divider type="vertical" />
                     <Button
                       onClick={() => {
+                        console.log(record);
                         POST("/user/set_admin", {
-                          id: record.UserUuid
-                        }).then(res => {
+                          id: record.UserUuid,
+                        }).then((res) => {
                           if (res.success === true) {
                             notification.success({
-                              message: "设置成功"
+                              message: "设置成功",
                             });
                           } else {
                             notification.error({
-                              message: "设置失败"
+                              message: "设置失败",
                             });
                           }
                           init();
@@ -167,8 +168,8 @@ export default props => {
                       设置为管理员
                     </Button>
                   </span>
-                )
-              }
+                ),
+              },
             ]}
             actions={
               [

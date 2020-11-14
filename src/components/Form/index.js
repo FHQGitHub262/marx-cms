@@ -15,6 +15,7 @@ import studentImporter from "./schema/StudentImporter";
 import subjectCreator from "./schema/SubjectCreator";
 import teacherCreator from "./schema/TeacherCreator";
 import questionImporter from "./schema/QuestionImporter";
+import questionEdit from "./schema/QuestionEdit";
 
 export const Login = () => <Form schema={login} formName="loginform" />;
 export const CollegeCreator = () => (
@@ -55,4 +56,7 @@ export const TeacherCreator = () => (
 );
 export const QuestionImporter = () => (
   <Form schema={questionImporter} formName="questionImporter" />
+);
+export const QuestionEdit = () => (
+  <Form schema={questionEdit} formName="questionEdit" />
 );

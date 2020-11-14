@@ -29,23 +29,26 @@ const pluginConfig = require("./webpack.config.override");
 // };
 
 module.exports = {
-  webpack: function(config) {
+  webpack: function (config) {
     const overrideConfig = override(
       // pluginConfig,
       fixBabelImports("import", {
         libraryName: "antd",
         libraryDirectory: "es",
-        style: true
+        style: true,
       }),
       addLessLoader({
-        javascriptEnabled: true
+        javascriptEnabled: true,
+        modifyvars: {
+          "@primary-color": "#005752",
+        },
       })
     )(config);
     overrideConfig.plugins = [
       ...overrideConfig.plugins,
-      ...pluginConfig.plugins
+      ...pluginConfig.plugins,
       // new AntDesignThemePlugin(options)
     ];
     return overrideConfig;
-  }
+  },
 };

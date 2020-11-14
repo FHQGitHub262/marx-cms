@@ -8,14 +8,41 @@ export default (props) => {
   const min = 0;
   let value, handleChange;
   try {
-    [value, handleChange] = useState(
-      JSON.parse((props.rootValue || {})[props.name]) || [3, 7]
-    );
+    [value, handleChange] = useState(() => {
+      if (props.range === "") {
+        return [3, 7];
+      }
+      const range = JSON.parse(props.value || "[]");
+      if (range.length <= 0) {
+        return [3, 7];
+      } else {
+        return range;
+      }
+    });
   } catch (error) {
     [value, handleChange] = useState([3, 7]);
   }
 
   const mid = ((max - min) / 2).toFixed(5);
+
+  useEffect(() => {
+    if (props.value === "") {
+      props.onChange(props.name, JSON.stringify([3, 7]));
+    }
+    const range = JSON.parse(props.value || "[]");
+
+    props.onChange(
+      props.name,
+      (() => {
+        if (range.length <= 0) {
+          return [3, 7];
+        } else {
+          return range;
+        }
+      })()
+    );
+    // console.log(JSON.parse((props.rootValue || "{}")[props.name]));
+  }, []);
 
   useEffect(() => {
     props.onChange(props.name, JSON.stringify(value));
@@ -31,10 +58,17 @@ export default (props) => {
         简单
       </div>
       <Slider
+        // tooltipVisible={true}
         max={10}
         min={0}
+        marks={Array(10)
+          .fill(0)
+          .reduce(
+            (prev, item, index) => ({ ...prev, [index]: String(index) }),
+            {}
+          )}
         range
-        defaultValue={[3, 7]}
+        value={value}
         onChange={handleChange}
         style={{ flex: 1, margin: 12 }}
       />

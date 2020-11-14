@@ -2,34 +2,34 @@ import React, { useState } from "react";
 import { Upload, Button, Icon, message } from "antd";
 import { UPLOAD } from "../../../lib/fetch";
 
-export default props => {
+export default (props) => {
   const [fileList, setFileList] = useState([]);
   const [uploading, setUploading] = useState(false);
   const [uploaded, setUploaded] = useState(false);
   const [value, setValue] = useState("");
 
-  const onChange = value => {
+  const onChange = (value) => {
     props.onChange(props.name, value);
     setValue(value);
   };
 
   const uploadConfig = {
-    onRemove: file => {
+    onRemove: (file) => {
       const index = fileList.indexOf(file);
       const newFileList = fileList.slice();
       newFileList.splice(index, 1);
       setFileList(newFileList);
     },
-    beforeUpload: file => {
+    beforeUpload: (file) => {
       setFileList([file]);
       return false;
     },
-    fileList
+    fileList,
   };
 
   const handleUpload = async () => {
     const formData = new FormData();
-    fileList.forEach(file => {
+    fileList.forEach((file) => {
       file.status = "uploading";
       formData.append("recfile", file);
     });
@@ -76,7 +76,7 @@ export default props => {
         loading={uploading}
         style={{ marginTop: 16 }}
       >
-        {uploading ? "Uploading" : "Start Upload"}
+        {uploading ? "上传中" : "提交文件"}
       </Button>
     </div>
   );

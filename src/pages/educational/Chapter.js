@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext, useMemo } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import beforeSubmit from "../../lib/beforeSubmit";
 import Context from "../../context";
 import Header from "../../components/Header";
@@ -6,6 +6,7 @@ import Container from "../../components/Container";
 import SortTable from "../../components/SortTable";
 import { Button, notification, message } from "antd";
 import Pop from "../../components/Pop";
+import SubjectSelect from "../../components/Subject";
 
 import { QuestionImporter, ChapterCreator } from "../../components/Form";
 import { GET, POST } from "../../lib/fetch";
@@ -15,9 +16,9 @@ export default (props) => {
   const [importVisible, setImportVisible] = useState(false);
   const [uploadLoading, setUploadloading] = useState(false);
   const [raw, setRaw] = useState(undefined);
-  const query = useMemo(() => {
+  const [query, setQuery] = useState(() => {
     return decode(props.location.search);
-  }, [props]);
+  });
 
   const context = useContext(Context);
 
@@ -30,18 +31,27 @@ export default (props) => {
   };
 
   const init = () => {
-    GET("/educational/chapters", { id: query.id }).then((res) => {
-      console.log(res);
-      setRaw(res.data || []);
-    });
-  };
-  useEffect(() => {
-    if (decode(props.location.search) && context.userInfo) {
-      init();
+    if (query === {}) {
+      setRaw([]);
     } else {
-      props.history.push("/educational/subject");
+      GET("/educational/chapters", { id: query.id }).then((res) => {
+        console.log(res);
+        setRaw(res.data || []);
+      });
     }
-  }, []);
+  };
+  // useEffect(() => {
+  //   if (decode(props.location.search) && context.userInfo) {
+  //     init();
+  //   } else {
+  //     props.history.push("/educational/subject");
+  //   }
+  // }, []);
+
+  useEffect(() => {
+    console.log("query", query);
+    init();
+  }, [query]);
 
   return (
     <div>
@@ -109,7 +119,7 @@ export default (props) => {
         <ChapterCreator />
       </Pop>
       <Header
-        title="章节管理"
+        title="题库管理"
         onBack={() => {
           props.history.goBack();
         }}
@@ -123,6 +133,7 @@ export default (props) => {
                   onClick={changeImportPop}
                   key="2"
                   loading={uploadLoading}
+                  disabled={!(query !== undefined && query.id !== undefined)}
                 >
                   导入题库
                 </Button>,
@@ -131,6 +142,13 @@ export default (props) => {
         }
       />
       <Container>
+        <SubjectSelect
+          tips="当前选择的学科："
+          placeholder="请选择要查看的学科"
+          onChange={(e) => {
+            setQuery(e);
+          }}
+        />
         <SortTable
           data={raw}
           columns={[

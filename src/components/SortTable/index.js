@@ -137,7 +137,7 @@ export default (props) => {
         )}
       </div>
       <Table
-        loading={loading}
+        loading={loading || props.loading}
         rowSelection={{
           ...(props.rowOptions || {}),
           selectedRowKeys,
@@ -155,7 +155,15 @@ export default (props) => {
           } else return item;
         })}
         dataSource={props.data || []}
-        pagination={false}
+        pagination={
+          props.pagination
+            ? {
+                ...props.pagination,
+                position: "both",
+                onChange: props.loadData,
+              }
+            : false
+        }
         rowKey={(record) => record[props.keyName] || record.id}
       />
     </div>

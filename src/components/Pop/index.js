@@ -27,7 +27,6 @@ export default class Pop extends React.Component {
   };
 
   render() {
-    const { confirmLoading } = this.state;
     return (
       <div>
         <Modal

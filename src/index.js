@@ -6,13 +6,14 @@ import App from "./App";
 import { ConfigProvider } from "antd";
 import { HashRouter } from "react-router-dom";
 // import * as serviceWorker from "./serviceWorker";
+import "./index.less";
 
 import Context from "./context";
 
 const Component = () => {
   const [loginform, update_loginform] = useState({});
   const [userInfo, setUserInfo] = useState({});
-  // const [login, update_login] = useState({});
+  const [questionEdit, update_questionEdit] = useState({});
   const [collegeCreator, update_collegeCreator] = useState({});
   const [courseGranter, update_courseGranter] = useState({});
   const [chapterCreator, update_chapterCreator] = useState({});
@@ -60,7 +61,9 @@ const Component = () => {
           teacherCreator,
           update_teacherCreator,
           questionImporter,
-          update_questionImporter
+          update_questionImporter,
+          questionEdit,
+          update_questionEdit,
         }}
       >
         <HashRouter>

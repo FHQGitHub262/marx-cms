@@ -9,13 +9,14 @@ import { Divider, Button, notification } from "antd";
 import Pop from "../../components/Pop";
 import { PaperCreator } from "../../components/Form";
 import { GET, POST } from "../../lib/fetch";
+import SubjectSelector from "../../components/Subject";
 
 export default (props) => {
   const [visible, setVisible] = useState(false);
   const [editVisible, setEditVisible] = useState(false);
   const [raw, setRaw] = useState(undefined);
   const [active, setActive] = useState("");
-
+  const [subject, setSubject] = useState("");
   const context = useContext(Context);
 
   const changePop = () => {
@@ -23,7 +24,9 @@ export default (props) => {
   };
 
   const init = () => {
-    GET("/examination/papers").then((res) => {
+    GET("/examination/papers", {
+      id: subject.id || "",
+    }).then((res) => {
       setRaw(res.data || []);
     });
   };
@@ -46,14 +49,18 @@ export default (props) => {
     setEditVisible(true);
   };
 
+  // useEffect(() => {
+  //   init();
+  // }, []);
+
   useEffect(() => {
     init();
-  }, []);
+  }, [subject]);
 
   return (
     <div>
       <Pop
-        width={1080}
+        width={800}
         style={{ top: 10 }}
         visible={editVisible}
         doHide={() => {
@@ -85,7 +92,7 @@ export default (props) => {
         <PaperCreator />
       </Pop>
       <Pop
-        width={1080}
+        width={800}
         style={{ top: 10 }}
         visible={visible}
         doHide={() => {
@@ -121,11 +128,21 @@ export default (props) => {
         action={{
           name: "添加试卷",
           handler: () => {
+            context.update_paperCreator({});
             changePop();
           },
+          disabled: true,
         }}
       />
       <Container>
+        <div style={{ display: "flex" }}>
+          <SubjectSelector
+            onChange={(e) => setSubject(e)}
+            tips="当前选择的学科："
+            placeholder="请选择要查看的学科"
+          />
+        </div>
+
         <SortTable
           columns={[
             {
@@ -175,14 +192,14 @@ export default (props) => {
               },
             },
           ]}
-          actions={[
-            {
-              title: "禁用",
-              handler: (v) => {
-                console.log(v);
-              },
-            },
-          ]}
+          // actions={[
+          //   {
+          //     title: "禁用",
+          //     handler: (v) => {
+          //       console.log(v);
+          //     },
+          //   },
+          // ]}
           data={raw}
         />
       </Container>

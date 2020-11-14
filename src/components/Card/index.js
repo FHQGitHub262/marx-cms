@@ -49,28 +49,28 @@ export const SubjectCard = (props) => {
         title={props.name || "Subject"}
         bordered={true}
         style={{ maxWidth: 300 }}
-        actions={[
-          <Button
-            onClick={() => {
-              const backUp = (...args) => {
-                console.log(args);
-              };
-              (props.handleCourse || backUp)(props);
-            }}
-          >
-            查看课程
-          </Button>,
-          <Button
-            onClick={() => {
-              const backUp = (...args) => {
-                console.log(args);
-              };
-              (props.handleChapter || backUp)(props);
-            }}
-          >
-            查看章节
-          </Button>,
-        ]}
+        // actions={[
+        //   <Button
+        //     onClick={() => {
+        //       const backUp = (...args) => {
+        //         console.log(args);
+        //       };
+        //       (props.handleCourse || backUp)(props);
+        //     }}
+        //   >
+        //     查看课程
+        //   </Button>,
+        //   <Button
+        //     onClick={() => {
+        //       const backUp = (...args) => {
+        //         console.log(args);
+        //       };
+        //       (props.handleChapter || backUp)(props);
+        //     }}
+        //   >
+        //     查看章节
+        //   </Button>,
+        // ]}
       >
         {props.majorNum !== undefined && <p>章节数：{props.majorNum}</p>}
         {/* {props.questionNum && <p>题目数：{props.questionNum}</p>} */}

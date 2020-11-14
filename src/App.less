@@ -1,9 +1,29 @@
-@import "~antd/dist/antd.less";
-
 .logo {
-  height: 32px;
-  background: rgba(255, 255, 255, 0.2);
+  height: auto;
+  width: 160px;
   margin: 16px;
+}
+
+.App-main {
+}
+
+.App-main::before {
+  background-image: url("./assets/marx.png");
+  background-position: bottom 20px right 20px;
+  background-repeat: no-repeat;
+  background-blend-mode: darken;
+  background-size: auto 50%;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  opacity: 0.1;
+  content: " ";
+  z-index: 0;
+  pointer-events: none;
 }
 
 // @media (prefers-color-scheme: dark) {

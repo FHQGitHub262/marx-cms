@@ -6,10 +6,14 @@ import Header from "../../components/Header";
 import Container from "../../components/Container";
 import SortTable from "../../components/SortTable";
 import { Divider, Button, notification } from "antd";
+// import Highlighter from "react-highlight-words";
 import Pop from "../../components/Pop";
 import { ExamCreator } from "../../components/Form";
-import { GET, POST } from "../../lib/fetch";
+import { GET, POST, DOWNLOAD } from "../../lib/fetch";
 import dateFormat from "../../lib/dateFormat";
+import SubjectSelector from "../../components/Subject";
+import TimeRange from "../../components/TimeRange";
+import { encode } from "../../lib/params";
 
 export default (props) => {
   const [visible, setVisible] = useState(false);
@@ -17,14 +21,18 @@ export default (props) => {
   const [raw, setRaw] = useState(undefined);
   const context = useContext(Context);
   const [active, setActive] = useState("");
-
+  const [subject, setSubject] = useState("");
+  const [range, setRange] = useState([]);
   const changePop = () => {
     setVisible(!visible);
   };
 
   const init = () => {
     if (props.location.query) {
-      GET("/educational/exams").then((res) => {
+      GET("/educational/exams", {
+        id: subject.id || "",
+        range: JSON.stringify(range),
+      }).then((res) => {
         if (res.data !== undefined) {
           res.data = res.data.map((item) => {
             item.usageName = item.usage ? "大考" : "小考";
@@ -35,7 +43,10 @@ export default (props) => {
         setRaw(res.data || []);
       });
     } else if (props.location.pathname === "/examination/quiz") {
-      GET("/educational/exams").then((res) => {
+      GET("/educational/exams", {
+        id: subject.id || "",
+        range: JSON.stringify(range),
+      }).then((res) => {
         if (res.data !== undefined) {
           res.data = res.data.map((item) => {
             item.usageName = item.usage ? "大考" : "小考";
@@ -64,9 +75,14 @@ export default (props) => {
     setEditVisible(true);
   };
 
+  // useEffect(() => {
+  //   init();
+  // }, []);
+
   useEffect(() => {
     init();
-  }, []);
+  }, [subject, range]);
+
   return (
     <div>
       <Pop
@@ -136,10 +152,31 @@ export default (props) => {
           handler: () => {
             changePop();
           },
+          disabled: subject && subject.id !== undefined,
         }}
       />
       <Container>
+        <div style={{ display: "flex" }}>
+          <SubjectSelector
+            onChange={(e) => setSubject(e)}
+            tips="当前选择的学科："
+            placeholder="请选择要查看的学科"
+          />
+          <TimeRange onChange={(e) => setRange(e)} />
+        </div>
         <SortTable
+          actions={[
+            {
+              title: "批量导出成绩",
+              handler: (v) => {
+                // endCourse(v);
+                console.log(v);
+                DOWNLOAD("/educational/exam/batchexport", {
+                  id: v,
+                });
+              },
+            },
+          ]}
           columns={[
             {
               title: "考试名称",
@@ -201,10 +238,9 @@ export default (props) => {
                     <Divider type="vertical" />
                     <Button
                       onClick={() => {
-                        props.history.push({
-                          pathname: "/educational/examinfo",
-                          query: record,
-                        });
+                        props.history.push(
+                          "/educational/examinfo" + encode(record)
+                        );
                       }}
                     >
                       详情

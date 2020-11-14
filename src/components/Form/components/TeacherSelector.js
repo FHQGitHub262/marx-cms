@@ -3,16 +3,15 @@ import { Select } from "antd";
 import { GET } from "../../../lib/fetch";
 const { Option } = Select;
 
-export default props => {
-  console.log(props);
+export default (props) => {
   const [raw, setRaw] = useState([]);
 
-  const onChange = value => {
+  const onChange = (value) => {
     props.onChange(props.name, value);
   };
 
   useEffect(() => {
-    GET("/educational/teachers").then(res => {
+    GET("/educational/teachers").then((res) => {
       // console.log(res);
       setRaw(res.data || []);
     });
@@ -31,7 +30,7 @@ export default props => {
         option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
       }
     >
-      {raw.map(item => (
+      {raw.map((item) => (
         <Option value={item.UserUuid} key={item.UserUuid}>
           {item.name}
         </Option>

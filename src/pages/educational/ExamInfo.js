@@ -3,17 +3,20 @@ import Header from "../../components/Header";
 import Container from "../../components/Container";
 import SortTable from "../../components/SortTable";
 import DataShower from "../../components/DataShower";
-import { DOWNLOAD, GET, POST } from "../../lib/fetch";
-import { notification } from "antd";
+import { DOWNLOAD, GET } from "../../lib/fetch";
+import { decode } from "../../lib/params";
 
-export default props => {
+export default (props) => {
   const [statistics, setStatistics] = useState([]);
   const [record, setRecord] = useState([]);
+  const [query] = useState(() => {
+    return decode(props.location.search);
+  });
+
   const init = () => {
-    if (props.location.query) {
-      console.log(props.location.query);
+    if (query) {
       GET("/educational/exam/galance", {
-        id: props.location.query.id
+        id: query.id,
       }).then(({ data }) => {
         setStatistics(data.statistics);
         setRecord(data.record || []);
@@ -28,7 +31,7 @@ export default props => {
   return (
     <div>
       <Header
-        title={(props.location.query || {}).name || ""}
+        title={(query || {}).name || ""}
         onBack={() => {
           props.history.goBack();
         }}
@@ -38,16 +41,16 @@ export default props => {
           data={[
             {
               title: "平均分",
-              value: statistics.average || ""
+              value: statistics.average || "",
             },
             {
               title: "最高分",
-              value: statistics.max || ""
+              value: statistics.max || "",
             },
             {
               title: "及格人数",
-              value: statistics.pass || ""
-            }
+              value: statistics.pass || "",
+            },
           ]}
         />
         <SortTable
@@ -56,36 +59,44 @@ export default props => {
               title: "导出Excel文件",
               handler: () => {
                 DOWNLOAD("/educational/exam/export", {
-                  id: props.location.query.id
+                  id: query.id,
                 });
-              }
+              },
             },
-            {
-              title: "备卷",
-              handler: () => {
-                POST("/educational/exam/prepare", {
-                  id: props.location.query.id
-                }).then(({ success = false }) => {
-                  success
-                    ? notification.success({ message: "操作成功" })
-                    : notification.error({ message: "操作失败" });
-                });
-              }
-            }
           ]}
           columns={[
             {
               title: "姓名",
-              dataIndex: "name"
+              dataIndex: "name",
+              search: "name",
             },
             {
               title: "学号",
-              dataIndex: "idNumber"
+              dataIndex: "idNumber",
+              search: "idNumber",
+            },
+            {
+              title: "学院",
+              dataIndex: "college",
+              search: "college",
+            },
+            {
+              title: "专业",
+              dataIndex: "major",
+              search: "major",
+            },
+            {
+              title: "班级",
+              dataIndex: "class",
+              search: "class",
             },
             {
               title: "分数",
-              dataIndex: "grade"
-            }
+              dataIndex: "grade",
+              render: (text, record) => {
+                return record.grade || 0;
+              },
+            },
           ]}
           data={record}
         />

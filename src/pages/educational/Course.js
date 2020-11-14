@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext, useMemo } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import beforeSubmit from "../../lib/beforeSubmit";
 import Context from "../../context";
 import Header from "../../components/Header";
@@ -9,15 +9,20 @@ import Pop from "../../components/Pop";
 import { CourseCreator } from "../../components/Form";
 import { GET, POST } from "../../lib/fetch";
 import { decode, encode } from "../../lib/params";
+import SubjectSelect from "../../components/Subject";
 
 export default (props) => {
   const [visible, setVisible] = useState(false);
   const [raw, setRaw] = useState(undefined);
   const [active, setActive] = useState("");
   const [editVisible, setEditVisible] = useState(false);
-  const query = useMemo(() => {
+  const [query, setQuery] = useState(() => {
     return decode(props.location.search);
-  }, [props]);
+  });
+
+  useEffect(() => {
+    init();
+  }, [query]);
 
   const context = useContext(Context);
 
@@ -39,32 +44,36 @@ export default (props) => {
   };
 
   const init = () => {
-    GET("/educational/courses", { id: query.id }).then((res) => {
-      setRaw(res.data || []);
-    });
+    if (query === {}) {
+      setRaw([]);
+    } else {
+      GET("/educational/courses", { id: query.id }).then((res) => {
+        setRaw(res.data || []);
+      });
+    }
   };
 
   const endCourse = async (id) => {
-    const { success = false } = await POST("/educational/course/end", {
+    await POST("/educational/course/end", {
       range: id,
     });
     init();
   };
 
   const fireCourse = async (id) => {
-    const { success = false } = await POST("/educational/course/fire", {
+    await POST("/educational/course/fire", {
       range: id,
     });
     init();
   };
 
-  useEffect(() => {
-    if (decode(props.location.search) && context.userInfo) {
-      init();
-    } else {
-      props.history.push("/educational/subject");
-    }
-  }, []);
+  // useEffect(() => {
+  //   if (decode(props.location.search) && context.userInfo) {
+  //     init();
+  //   } else {
+  //     props.history.push("/educational/subject");
+  //   }
+  // }, []);
 
   return (
     <div>
@@ -134,9 +143,17 @@ export default (props) => {
           handler: () => {
             changePop();
           },
+          disabled: query && query.id !== undefined,
         }}
       />
       <Container>
+        <SubjectSelect
+          tips="当前选择的学科："
+          placeholder="请选择要查看的学科"
+          onChange={(e) => {
+            setQuery(e);
+          }}
+        />
         <SortTable
           actions={[
             {
@@ -170,6 +187,7 @@ export default (props) => {
                   case "active":
                     return "进行中";
                   case "end":
+                  default:
                     return "已结束";
                 }
               },

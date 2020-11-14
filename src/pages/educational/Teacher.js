@@ -110,6 +110,7 @@ export default (props) => {
           handler: () => {
             changePop();
           },
+          disabled: true,
         }}
       />
       <Container>

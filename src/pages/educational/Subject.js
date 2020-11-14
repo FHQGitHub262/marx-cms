@@ -24,7 +24,7 @@ export default (props) => {
     if (context.userInfo) {
       init();
     }
-  }, []);
+  }, [context.userInfo]);
 
   const handleCourse = (item) => {
     props.history.push("/educational/course" + encode(item));
@@ -36,7 +36,7 @@ export default (props) => {
   };
 
   const init = () => {
-    GET("/educational/subjects", { id: 1 }).then((res) => {
+    GET("/educational/subjects").then((res) => {
       // console.log(res);
       setRaw(res.data || []);
     });
@@ -78,6 +78,7 @@ export default (props) => {
                 handler: () => {
                   changePop();
                 },
+                disabled: true,
               }
             : undefined
         }

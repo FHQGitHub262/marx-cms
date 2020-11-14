@@ -2,40 +2,78 @@ import React, { useState, useEffect, useContext } from "react";
 import beforeSubmit from "../../lib/beforeSubmit";
 import Context from "../../context";
 
-import { Row } from "antd";
-import { encode } from "../../lib/params";
-
-import { CollegeCard } from "../../components/Card";
+import { Row, Button } from "antd";
+import SortTable from "../../components/SortTable";
 import Header from "../../components/Header";
 import Container from "../../components/Container";
 import Pop from "../../components/Pop";
-import { CollegeCreator } from "../../components/Form";
+import { CollegeCreator, StudentImporter } from "../../components/Form";
 import { GET, POST } from "../../lib/fetch";
 import { notification } from "antd";
+import ClassSelector from "../../components/ClassSelector";
 
 export default (props) => {
   const [visible, setVisible] = useState(false);
+  const [importVisible, setImportVisible] = useState(false);
+  const context = useContext(Context);
+
+  const [loading, setLoading] = useState(false);
   const [raw, setRaw] = useState([]);
+  const [selector, setSelector] = useState({});
   const changePop = () => {
     setVisible(!visible);
   };
-  const context = useContext(Context);
+  const changeImportPop = () => {
+    setImportVisible(!importVisible);
+  };
 
   const init = () => {
-    GET("/school/colleges", { id: 1 }).then((res) => {
-      console.log(res);
+    setLoading(true);
+    GET("/school/students", { id: selector.class }).then((res) => {
       setRaw(res.data || []);
+      setLoading(false);
     });
   };
 
   useEffect(() => {
-    if (context.userInfo) {
+    if (
+      selector.college !== undefined &&
+      selector.major !== undefined &&
+      selector.class !== undefined
+    )
       init();
-    }
-  }, []);
+  }, [selector]);
 
   return (
     <div>
+      <Pop
+        visible={importVisible}
+        handleOk={() => {
+          if (beforeSubmit(context.studentImporter)) {
+            console.log(context.studentImporter);
+            POST("/school/student/import", {
+              filename: context.studentImporter.data.id,
+              college: selector.college,
+            })
+              .then((res) => {
+                notification.success({ message: "添加成功", duration: 2 });
+                changeImportPop();
+                init();
+              })
+              .catch((e) => {
+                notification.error({
+                  message: "添加出错",
+                  duration: 2,
+                });
+              });
+          }
+        }}
+        doHide={() => {
+          changeImportPop();
+        }}
+      >
+        <StudentImporter />
+      </Pop>
       <Pop
         visible={visible}
         doHide={() => {
@@ -64,31 +102,48 @@ export default (props) => {
       <Header
         title="学院一览"
         action={{
-          name: "添加学院",
+          disabled: selector.college !== undefined,
+          name: "导入学生",
           handler: () => {
-            changePop();
+            changeImportPop();
           },
         }}
+        actions={[<Button onClick={() => changePop()}>添加学院</Button>]}
       />
-      <Container>
-        <Row>
-          {raw.map((college) => (
-            <CollegeCard
-              key={college.id}
-              id={college.id}
-              collegeName={college.name}
-              majorNum={college.majorNum}
-              classNum={college.classNum}
-              handler={(item) => {
-                // props.history.push({
-                //   pathname: "/school/major",
-                //   query: item,
-                // });
 
-                props.history.push("/school/major" + encode(item));
-              }}
-            />
-          ))}
+      <Container>
+        <ClassSelector onChange={(e) => setSelector(e)} />
+        <Row>
+          <SortTable
+            loading={loading}
+            data={raw}
+            columns={[
+              {
+                title: "学号",
+                dataIndex: "idNumber",
+              },
+              {
+                title: "姓名",
+                dataIndex: "name",
+              },
+              {
+                title: "操作",
+                render: (text, record) => (
+                  <span>
+                    <Button
+                      href="#"
+                      onClick={() => {
+                        console.log(record);
+                      }}
+                    >
+                      重置密码
+                    </Button>
+                  </span>
+                ),
+              },
+            ]}
+            keyName="UserUuid"
+          />
         </Row>
       </Container>
     </div>

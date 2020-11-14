@@ -18,7 +18,7 @@ import TeacherSelector from "./components/TeacherSelector";
 import Uploader from "./components/Uploader";
 import QuestionLimiter from "./components/QuestionLimiter";
 import DifficultSlider from "./components/DifficultSlider";
-
+import QuestionDetail from "./components/QuestionDetail";
 export default React.forwardRef((props, ref) => {
   const context = useContext(Context);
   const [formData, setData] = useState(context[props.formName] || {});
@@ -60,6 +60,7 @@ export default React.forwardRef((props, ref) => {
         uploader: Uploader,
         questionLimiter: QuestionLimiter,
         difficultSlider: DifficultSlider,
+        questionDetail: QuestionDetail,
       }}
     />
   );

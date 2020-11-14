@@ -1,21 +1,23 @@
-import React, { useState, useEffect, useCallback, useMemo } from "react";
-import { Radio, InputNumber } from "antd";
+import React, { useState, useEffect, useMemo } from "react";
+import { InputNumber } from "antd";
 import { GET } from "../../../lib/fetch";
 
 export default (props) => {
   const [chapters, updateChapters] = useState([]);
-  // const [limited, updateLimited] = useState({});
   let limited, updateLimited;
   try {
-    [limited, updateLimited] = useState(
-      JSON.parse((props.rootValue || {})[props.name]) || {}
-    );
+    [limited, updateLimited] = useState(() => {
+      if (props.value === "") {
+        return {};
+      } else {
+        return JSON.parse(props.value);
+      }
+    });
   } catch (error) {
     [limited, updateLimited] = useState({});
   }
-  const selected = useMemo(() => props.options.subject);
+  const selected = useMemo(() => props.options.subject, [props]);
   useEffect(() => {
-    console.log(selected);
     selected !== "" &&
       GET("/educational/chapters", { id: selected }).then(({ data }) => {
         updateChapters(data);
@@ -23,7 +25,7 @@ export default (props) => {
           data.reduce((prev, curr) => {
             return {
               ...prev,
-              [curr.id]: "MAX",
+              [curr.id]: 10,
             };
           }, {})
         );

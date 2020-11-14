@@ -12,10 +12,12 @@ import CourseStudent from "../pages/educational/Student";
 // import Quiz from "../pages/examination/Quiz";
 import Paper from "../pages/examination/Paper";
 // School
-import Classes from "../pages/school/Classes";
+// import Classes from "../pages/school/Classes";
 import College from "../pages/school/College";
-import Major from "../pages/school/Major";
-import Student from "../pages/school/Student";
+// import Major from "../pages/school/Major";
+// import Student from "../pages/school/Student";
+
+import Setting from "../pages/Setting";
 
 export default [
   {
@@ -31,29 +33,24 @@ export default [
     icon: "desktop",
     component: Home,
   },
+
   {
     path: "/educational",
     name: "教务管理",
-    icon: "desktop",
+    icon: "table",
     routes: [
-      {
-        path: "/educational/teacher",
-        component: Teacher,
-        name: "教师管理",
-        display: true,
-        admin: true,
-      },
       {
         path: "/educational/subject",
         component: Subject,
         name: "学科管理",
         display: true,
-        // admin: true
+        admin: true,
       },
       {
         path: "/educational/course",
         component: Course,
         name: "课程管理",
+        display: true,
       },
       {
         path: "/educational/student",
@@ -73,7 +70,8 @@ export default [
       {
         path: "/educational/chapter",
         component: Chapter,
-        name: "章节管理",
+        display: true,
+        name: "题库管理",
       },
       {
         path: "/educational/question",
@@ -85,7 +83,7 @@ export default [
   {
     path: "/examination",
     name: "考务管理",
-    icon: "desktop",
+    icon: "schedule",
     routes: [
       {
         path: "/examination/paper",
@@ -102,32 +100,55 @@ export default [
     ],
   },
   {
-    path: "/school",
-    name: "学籍管理",
-    icon: "mobile",
+    path: "/school/college",
+    name: "学生信息管理",
+    component: College,
+    display: true,
     admin: true,
-    routes: [
-      {
-        path: "/school/college",
-        name: "学院一览",
-        component: College,
-        display: true,
-      },
-      {
-        path: "/school/major",
-        name: "专业管理",
-        component: Major,
-      },
-      {
-        path: "/school/class",
-        name: "班级管理",
-        component: Classes,
-      },
-      {
-        path: "/school/student",
-        name: "学生管理",
-        component: Student,
-      },
-    ],
+    icon: "team",
+  },
+  // {
+  //   path: "/school",
+  //   name: "学籍管理",
+  //   icon: "team",
+  //   admin: true,
+  //   routes: [
+  //     {
+  //       path: "/school/college",
+  //       name: "学院一览",
+  //       component: College,
+  //       display: true,
+  //     },
+  //     {
+  //       path: "/school/major",
+  //       name: "专业管理",
+  //       component: Major,
+  //     },
+  //     {
+  //       path: "/school/class",
+  //       name: "班级管理",
+  //       component: Classes,
+  //     },
+  //     {
+  //       path: "/school/student",
+  //       name: "学生管理",
+  //       component: Student,
+  //     },
+  //   ],
+  // },
+  {
+    path: "/account",
+    name: "教师账号管理",
+    icon: "user",
+    component: Teacher,
+    display: true,
+    admin: true,
+  },
+  {
+    path: "/setting",
+    name: "个性化设置",
+    icon: "setting",
+    component: Setting,
+    display: true,
   },
 ];

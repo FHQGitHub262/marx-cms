@@ -10,15 +10,18 @@ import routeConfig from "./router/config";
 
 import { Link, useHistory } from "react-router-dom";
 
-import { Login } from "./components/Form";
-import Pop from "./components/Pop";
+// import { Login } from "./components/Form";
+import Login from "./pages/Login";
+// import Pop from "./components/Pop";
+
+import logo from "./assets/logo.jpg";
 
 import { POST } from "./lib/fetch";
 
 const { Header, Content, Footer, Sider } = Layout;
 const { SubMenu } = Menu;
 
-export default props => {
+export default (props) => {
   const context = useContext(Context);
   const { loginform, userInfo, setUserInfo } = context;
   const [collapsed, setCollapsed] = useState(false);
@@ -29,13 +32,15 @@ export default props => {
     window.addEventListener("login", () => {
       history.push({
         pathname: "/",
-        query: userInfo
+        query: userInfo,
       });
       setLogined(false);
     });
-
+    const fontLevel = window.localStorage.getItem("fontSize");
+    const root = document.querySelector(":root");
+    root.style.setProperty("--base-size", fontLevel);
     POST("/user/info")
-      .then(res => {
+      .then((res) => {
         if ((res.success || false) === false) {
           window.dispatchEvent(new Event("login"));
         } else {
@@ -48,32 +53,33 @@ export default props => {
             notification.error({
               message: "登录失败",
               description: "请检查是否登录了学生账号",
-              duration: 2
+              duration: 2,
             });
             return;
           }
           setUserInfo(res.data);
         }
       })
-      .catch(e => {
+      .catch((e) => {
         notification.error({
           message: `获取用户信息失败` + JSON.stringify(e),
-          duration: 2
+          duration: 2,
         });
         window.dispatchEvent(new Event("login"));
       });
   }, []);
 
-  const onCollapse = collapsed => {
+  const onCollapse = (collapsed) => {
     setCollapsed(collapsed);
   };
 
   const login = async () => {
+    console.log("here");
     try {
       history.push("/");
       const { success = false, data = {} } = await POST("/user/login", {
         uuid: loginform.data.id,
-        password: loginform.data.password
+        password: loginform.data.password,
       });
 
       if (success) {
@@ -85,27 +91,28 @@ export default props => {
           notification.error({
             message: "登录失败",
             description: "请检查是否登录了学生账号",
-            duration: 2
+            duration: 2,
           });
           return;
         }
         setUserInfo(data);
         notification.success({
           message: "登录成功",
-          duration: 2
+          duration: 2,
         });
         setLogined(true);
       } else {
         notification.error({
           message: "登录失败",
           description: "请检查用户名和密码",
-          duration: 2
+          duration: 2,
         });
       }
     } catch (e) {
+      console.log(e);
       notification.success({
         message: JSON.stringify(e),
-        duration: 2
+        duration: 2,
       });
     }
   };
@@ -116,131 +123,162 @@ export default props => {
     setLogined(false);
     history.push({
       pathname: "/",
-      query: userInfo
+      query: userInfo,
     });
   };
   return (
     <Layout style={{ minHeight: "100vh" }}>
-      <Pop
+      {/* <Pop
+        style={{
+          top: "0",
+        }}
+        width={"100vw"}
         visible={!logined || false}
         doHide={() => console.log("try hide")}
         handleOk={() => login()}
       >
         <Login />
-      </Pop>
-      <Sider collapsible collapsed={collapsed} onCollapse={onCollapse}>
-        <div
-          className="logo"
-          onClick={() => {
-            history.push({
-              pathname: "/",
-              query: userInfo
-            });
-          }}
-        />
-        <Menu
-          theme="dark"
-          defaultOpenKeys={["test", "/school", "/examination", "/educational"]}
-          defaultSelectedKeys={[active]}
-          mode="inline"
+      </Pop> */}
+      <Login visible={!logined} handleLogin={login} />
+      {logined && (
+        <Sider
+          theme="light"
+          collapsible
+          collapsed={collapsed}
+          onCollapse={onCollapse}
         >
-          {routeConfig.map(route => {
-            if (!route.routes) {
-              return (
-                route.display === true &&
-                (route.admin !== true ||
-                  (userInfo.privilege &&
-                    userInfo.privilege.indexOf("admin") > 0)) && (
-                  <Menu.Item key={route.path}>
-                    <Link to={route.path}>
-                      {route.icon && <Icon type={route.icon} />}
-                      <span>{route.name}</span>
-                    </Link>
-                  </Menu.Item>
-                )
-              );
-            } else {
-              return (
-                (route.admin !== true ||
-                  (userInfo.privilege &&
-                    userInfo.privilege.indexOf("admin") >= 0)) && (
-                  <SubMenu
-                    key={route.path}
-                    title={
-                      <span>
+          <img
+            className="logo"
+            alt="浙江树人大学"
+            src={logo}
+            onClick={() => {
+              history.push({
+                pathname: "/",
+                query: userInfo,
+              });
+            }}
+          />
+          <Menu
+            // theme="dark"
+            defaultOpenKeys={[
+              "test",
+              "/school",
+              "/examination",
+              "/educational",
+            ]}
+            defaultSelectedKeys={[active]}
+            mode="inline"
+          >
+            {routeConfig.map((route) => {
+              if (!route.routes) {
+                return (
+                  route.display === true &&
+                  (route.admin !== true ||
+                    (userInfo.privilege &&
+                      userInfo.privilege.indexOf("admin") >= 0)) && (
+                    <Menu.Item key={route.path}>
+                      <Link to={route.path}>
                         {route.icon && <Icon type={route.icon} />}
                         <span>{route.name}</span>
-                      </span>
-                    }
-                  >
-                    {route.routes.map(subRoutes => {
-                      return (
-                        subRoutes.display === true &&
-                        (subRoutes.admin !== true ||
-                          (userInfo.privilege &&
-                            userInfo.privilege.indexOf("admin") >= 0)) && (
-                          <Menu.Item key={subRoutes.path}>
-                            <Link to={subRoutes.path}>{subRoutes.name}</Link>
-                          </Menu.Item>
-                        )
-                      );
-                    })}
-                  </SubMenu>
-                )
-              );
-            }
-          })}
-        </Menu>
-      </Sider>
-      <Layout
-        style={{
-          display: "flex",
-          flexDirection: "column"
-        }}
-      >
-        <Header
+                      </Link>
+                    </Menu.Item>
+                  )
+                );
+              } else {
+                return (
+                  (route.admin !== true ||
+                    (userInfo.privilege &&
+                      userInfo.privilege.indexOf("admin") >= 0)) && (
+                    <SubMenu
+                      key={route.path}
+                      title={
+                        <span>
+                          {route.icon && <Icon type={route.icon} />}
+                          <span>{route.name}</span>
+                        </span>
+                      }
+                    >
+                      {route.routes.map((subRoutes) => {
+                        return (
+                          subRoutes.display === true &&
+                          (subRoutes.admin !== true ||
+                            (userInfo.privilege &&
+                              userInfo.privilege.indexOf("admin") >= 0)) && (
+                            <Menu.Item key={subRoutes.path}>
+                              <Link to={subRoutes.path}>{subRoutes.name}</Link>
+                            </Menu.Item>
+                          )
+                        );
+                      })}
+                    </SubMenu>
+                  )
+                );
+              }
+            })}
+          </Menu>
+        </Sider>
+      )}
+      {logined && (
+        <Layout
+          className="App-main"
           style={{
-            flex: 0,
-            background: "var(--background-color)",
-            padding: 0,
-            color: "var(--font-color)",
             display: "flex",
-            flexDirection: "row-reverse"
+            flexDirection: "column",
           }}
         >
-          <div
+          <Header
             style={{
-              position: "relative",
-              right: "16px",
-              cursor: "pointer"
+              flex: 0,
+              background: "var(--background-color)",
+              padding: 0,
+              color: "var(--font-color)",
+              display: "flex",
+              flexDirection: "row",
+              justifyContent: "space-between",
             }}
           >
-            <Popconfirm
-              placement="bottom"
-              title="确认要注销当前用户吗"
-              okText="是"
-              cancelText="否"
-              onConfirm={logout}
+            <div
+              style={{
+                position: "relative",
+                left: "16px",
+              }}
             >
-              {userInfo.name || ""}
-            </Popconfirm>
-          </div>
-        </Header>
-        <Content style={{ margin: "24px 16px 0", flex: 1 }}>
-          <div
-            style={{
-              padding: 24,
-              background: "var(--background-color-top)",
-              height: "100%"
-            }}
-          >
-            <RouterView />
-          </div>
-        </Content>
-        <Footer style={{ textAlign: "center", flex: 0 }}>
-          Marx - 树人大学考试系统
-        </Footer>
-      </Layout>
+              {/* <h1>思政课在线考试管理系统</h1> */}
+            </div>
+            <div
+              style={{
+                position: "relative",
+                right: "16px",
+                cursor: "pointer",
+              }}
+            >
+              <Popconfirm
+                placement="bottom"
+                title="确认要注销当前用户吗"
+                okText="是"
+                cancelText="否"
+                onConfirm={logout}
+              >
+                {userInfo.name || ""}
+              </Popconfirm>
+            </div>
+          </Header>
+          <Content style={{ margin: "24px 16px 0", flex: 1 }}>
+            <div
+              style={{
+                padding: 24,
+                background: "var(--background-color-top)",
+                height: "100%",
+              }}
+            >
+              <RouterView />
+            </div>
+          </Content>
+          <Footer style={{ textAlign: "center", flex: 0 }}>
+            Marx - 树人大学考试系统
+          </Footer>
+        </Layout>
+      )}
     </Layout>
   );
 };

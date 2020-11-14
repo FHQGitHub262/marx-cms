@@ -7,12 +7,12 @@ import Context from "../../context";
 import Header from "../../components/Header";
 import Container from "../../components/Container";
 import SortTable from "../../components/SortTable";
-import { decode, encode } from "../../lib/params";
+import { decode } from "../../lib/params";
 
 import { GET } from "../../lib/fetch";
 
 export default (props) => {
-  const [visible, setVisible] = useState(false);
+  // const [visible, setVisible] = useState(false);
   const context = useContext(Context);
   const [raw, setRaw] = useState(undefined);
   const query = useMemo(() => {

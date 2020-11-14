@@ -3,23 +3,23 @@ export default {
   properties: {
     name: {
       title: "课程名称",
-      type: "string"
+      type: "string",
       // "ui:width": "50%" // uiSchema 可以合并到 propsSchema 中（推荐写法，书写便捷）
     },
     studentList: {
       title: "选择学生",
       type: "array",
-      "ui:widget": "studentSelector"
+      "ui:widget": "studentSelector",
     },
     teacher: {
-      title: "负责教师",
+      title: "选择负责教师",
       type: "string",
-      "ui:widget": "teacherSelector"
-    }
+      "ui:widget": "teacherSelector",
+    },
     // select: {
     //   title: "单选",
     //   type: "string",
     //   enum: ["a", "b", "c"]
     // }
-  }
+  },
 };

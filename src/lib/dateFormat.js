@@ -1,4 +1,4 @@
-export default function(date, fmt) {
+export default function (date, fmt) {
   var o = {
     "M+": date.getMonth() + 1, //月份
     "d+": date.getDate(), //日
@@ -6,7 +6,7 @@ export default function(date, fmt) {
     "m+": date.getMinutes(), //分
     "s+": date.getSeconds(), //秒
     "q+": Math.floor((date.getMonth() + 3) / 3), //季度
-    S: date.getMilliseconds() //毫秒
+    S: date.getMilliseconds(), //毫秒
   };
   if (/(y+)/.test(fmt)) {
     fmt = fmt.replace(
@@ -18,7 +18,7 @@ export default function(date, fmt) {
     if (new RegExp("(" + k + ")").test(fmt)) {
       fmt = fmt.replace(
         RegExp.$1,
-        RegExp.$1.length == 1 ? o[k] : ("00" + o[k]).substr(("" + o[k]).length)
+        RegExp.$1.length === 1 ? o[k] : ("00" + o[k]).substr(("" + o[k]).length)
       );
     }
   }

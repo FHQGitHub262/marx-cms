@@ -23,6 +23,7 @@ const Component = () => {
   const [majorCreator, update_majorCreator] = useState({});
   const [paperCreator, update_paperCreator] = useState({});
   const [studentAdder, update_studentAdder] = useState({});
+  const [studentSingleAdder, update_studentSingleAdder] = useState({});
   const [studentImporter, update_studentImporter] = useState({});
   const [subjectCreator, update_subjectCreator] = useState({});
   const [teacherCreator, update_teacherCreator] = useState({});
@@ -64,6 +65,8 @@ const Component = () => {
           update_questionImporter,
           questionEdit,
           update_questionEdit,
+          studentSingleAdder, 
+          update_studentSingleAdder
         }}
       >
         <HashRouter>

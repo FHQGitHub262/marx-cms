@@ -11,6 +11,7 @@ import SubjectSelect from "../../components/Subject";
 import { QuestionImporter, ChapterCreator } from "../../components/Form";
 import { GET, POST } from "../../lib/fetch";
 import { decode, encode } from "../../lib/params";
+import config from "../../config";
 export default (props) => {
   const [visible, setVisible] = useState(false);
   const [importVisible, setImportVisible] = useState(false);
@@ -124,21 +125,35 @@ export default (props) => {
           props.history.goBack();
         }}
         actions={
-          (context.userInfo.privilege || []).indexOf("admin") >= 0
-            ? [
-                // <Button onClick={changePop} key="1">
-                //   添加章节
-                // </Button>,
-                <Button
-                  onClick={changeImportPop}
-                  key="2"
-                  loading={uploadLoading}
-                  disabled={!(query !== undefined && query.id !== undefined)}
-                >
-                  导入题库
-                </Button>,
-              ]
-            : undefined
+          [
+            // <Button onClick={changePop} key="1">
+            //   添加章节
+            // </Button>,
+            (context.userInfo.privilege || []).indexOf("admin") >= 0
+            && (<Button
+              onClick={changeImportPop}
+              key="2"
+              loading={uploadLoading}
+              disabled={!(query !== undefined && query.id !== undefined)}
+            >
+              导入题库
+            </Button>),
+            <Button onClick={() => {
+
+              const link = document.createElement('a');
+              //设置下载的文件名
+              link.download = `考试系统-题库模板.xlsx`;
+              
+              //设置下载路径
+              link.target = '_blank'
+              link.href = `${config.suffix}/demo/绪论.xlsx`;
+              //触发点击
+              link.click();
+            }}>下载模板</Button>
+          ]
+
+
+
         }
       />
       <Container>

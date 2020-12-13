@@ -2,26 +2,32 @@ import React, { useState, useEffect, useContext } from "react";
 import beforeSubmit from "../../lib/beforeSubmit";
 import Context from "../../context";
 
-import { Row, Button } from "antd";
+import { Row, Button, message } from "antd";
 import SortTable from "../../components/SortTable";
 import Header from "../../components/Header";
 import Container from "../../components/Container";
 import Pop from "../../components/Pop";
-import { CollegeCreator, StudentImporter } from "../../components/Form";
+import { CollegeCreator, StudentImporter, StudentSingleAdder } from "../../components/Form";
 import { GET, POST } from "../../lib/fetch";
 import { notification } from "antd";
 import ClassSelector from "../../components/ClassSelector";
+import config from "../../config";
 
 export default (props) => {
   const [visible, setVisible] = useState(false);
+  const [addVisible, setAddVisible] = useState(false);
   const [importVisible, setImportVisible] = useState(false);
   const context = useContext(Context);
 
   const [loading, setLoading] = useState(false);
   const [raw, setRaw] = useState([]);
   const [selector, setSelector] = useState({});
+  const [inited, setInited] = useState(false)
   const changePop = () => {
     setVisible(!visible);
+  };
+  const changeAddPop = () => {
+    setAddVisible(!addVisible);
   };
   const changeImportPop = () => {
     setImportVisible(!importVisible);
@@ -29,6 +35,7 @@ export default (props) => {
 
   const init = () => {
     setLoading(true);
+    setInited(true)
     GET("/school/students", { id: selector.class }).then((res) => {
       setRaw(res.data || []);
       setLoading(false);
@@ -99,20 +106,72 @@ export default (props) => {
       >
         <CollegeCreator />
       </Pop>
+      <Pop
+        visible={addVisible}
+        doHide={() => {
+          changeAddPop();
+        }}
+        handleOk={() => {
+          // console.log(context.subjectCreator);
+          if (beforeSubmit(context.studentSingleAdder)) {
+            console.log(context.studentSingleAdder.data, selector)
+
+            POST('/school/student/add', {
+              ...context.studentSingleAdder.data,
+              classId: selector.class
+            })
+              .then((res) => {
+                notification.success({ message: "创建成功", duration: 2 });
+                changeAddPop();
+                init();
+              })
+              .catch((e) => {
+                notification.error({
+                  message: "创建出错",
+                  duration: 2,
+                });
+              });
+          }
+        }}
+      >
+        <StudentSingleAdder />
+      </Pop>
       <Header
         title="学院一览"
         action={{
           disabled: selector.college !== undefined,
-          name: "导入学生",
+          name: "批量导入",
           handler: () => {
             changeImportPop();
           },
         }}
-        actions={[<Button onClick={() => changePop()}>添加学院</Button>]}
+        actions={[
+          <Button onClick={() => {
+
+            const link = document.createElement('a');
+            //设置下载的文件名
+            link.download = `考试系统-学籍模板.xlsx`;
+            link.style.display = 'none';
+            //设置下载路径
+            link.target = '_blank'
+            link.href = `${config.suffix}/demo/students.xlsx`;
+            //触发点击
+            link.click();
+
+          }}>模板下载</Button>,
+          <Button onClick={() => changePop()}>添加学院</Button>,
+          <Button onClick={() => changeAddPop()} disabled={!(selector.college !== undefined &&
+            selector.major !== undefined &&
+            selector.class !== undefined)}>单独添加</Button>
+        ]}
       />
 
       <Container>
-        <ClassSelector onChange={(e) => setSelector(e)} />
+        <Row>
+          <ClassSelector onChange={(e) => setSelector(e)} />
+
+        </Row>
+
         <Row>
           <SortTable
             loading={loading}
@@ -131,9 +190,13 @@ export default (props) => {
                 render: (text, record) => (
                   <span>
                     <Button
-                      href="#"
                       onClick={() => {
                         console.log(record);
+                        POST('/user/resetPassword', {
+                          uuid: record.UserUuid
+                        }).then(({ success }) => {
+                          success ? message.success("重置成功") : message.error("操作失败")
+                        })
                       }}
                     >
                       重置密码

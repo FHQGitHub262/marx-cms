@@ -114,13 +114,14 @@ export default (props) => {
         action={
           (context.userInfo.privilege || []).indexOf("admin") >= 0
             ? {
-                name: "添加题目",
-                handler: () => {
-                  changePop();
-                },
-              }
+              name: "添加题目",
+              handler: () => {
+                changePop();
+              },
+            }
             : undefined
         }
+
       />
       <Container>
         <SortTable

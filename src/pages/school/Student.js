@@ -66,7 +66,6 @@ export default (props) => {
                 render: (text, record) => (
                   <span>
                     <Button
-                      href="#"
                       onClick={() => {
                         console.log(record);
                       }}

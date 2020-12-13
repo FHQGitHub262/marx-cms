@@ -11,6 +11,7 @@ import courseGranter from "./schema/GrantCourse";
 import majorCreator from "./schema/MajorCreator";
 import paperCreator from "./schema/PaperCreator";
 import studentAdder from "./schema/StudentAdder";
+import studentSingleAdder from './schema/StudentSingleAdder';
 import studentImporter from "./schema/StudentImporter";
 import subjectCreator from "./schema/SubjectCreator";
 import teacherCreator from "./schema/TeacherCreator";
@@ -44,6 +45,9 @@ export const PaperCreator = () => (
 );
 export const StudentAdder = () => (
   <Form schema={studentAdder} formName="studentAdder" />
+);
+export const StudentSingleAdder = () => (
+  <Form schema={studentSingleAdder} formName="studentSingleAdder" />
 );
 export const StudentImporter = () => (
   <Form schema={studentImporter} formName="studentImporter" />

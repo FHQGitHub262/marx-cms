@@ -16,11 +16,21 @@ export default class ClassSelector extends React.Component {
   };
   constructor(props) {
     super(props);
-    (this.props.onChange || (() => {}))({});
+    this.init()
+  }
+
+  init = () => {
+    (this.props.onChange || (() => { }))({});
     GET("/school/colleges").then((res) => {
       // console.log(res);
       this.setState({
         colleges: res.data || [],
+        majors: [],
+        classes: [],
+        checkedCollege: undefined,
+        checkedMajor: undefined,
+        value: undefined,
+        raw: [],
       });
     });
   }
@@ -29,7 +39,7 @@ export default class ClassSelector extends React.Component {
     this.setState({
       checkedCollege: e,
     });
-    (this.props.onChange || (() => {}))({
+    (this.props.onChange || (() => { }))({
       college: e,
     });
     GET("/school/majors", { id: e }).then((res) => {
@@ -43,7 +53,7 @@ export default class ClassSelector extends React.Component {
     this.setState({
       checkedMajor: e,
     });
-    (this.props.onChange || (() => {}))({
+    (this.props.onChange || (() => { }))({
       college: this.state.checkedCollege,
       major: e,
     });
@@ -58,7 +68,7 @@ export default class ClassSelector extends React.Component {
     this.setState({
       value: e,
     });
-    (this.props.onChange || (() => {}))({
+    (this.props.onChange || (() => { }))({
       college: this.state.checkedCollege,
       major: this.state.checkedMajor,
       class: e,

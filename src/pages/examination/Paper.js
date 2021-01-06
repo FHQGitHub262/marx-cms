@@ -35,7 +35,7 @@ export default (props) => {
     const { data } = await GET("/examination/paper/detail", {
       id: record.id,
     });
-    context.update_paperCreator({
+    const nextState = {
       ...record,
       forExam: record.type,
       singleNum: record.totalSingle,
@@ -45,7 +45,9 @@ export default (props) => {
       singleList: (data.questions.single || []).map((item) => item.id),
       truefalseList: (data.questions.trueFalse || []).map((item) => item.id),
       multiList: (data.questions.multi || []).map((item) => item.id),
-    });
+    }
+    console.log(nextState)
+    context.update_paperCreator(nextState);
     setEditVisible(true);
   };
 

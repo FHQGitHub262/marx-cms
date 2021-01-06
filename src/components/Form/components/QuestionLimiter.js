@@ -4,28 +4,30 @@ import { GET } from "../../../lib/fetch";
 
 export default (props) => {
   const [chapters, updateChapters] = useState([]);
-  let limited, updateLimited;
-  try {
-    [limited, updateLimited] = useState(() => {
+  const [limited, updateLimited] = useState(() => {
+    try {
       if (props.value === "") {
         return {};
       } else {
         return JSON.parse(props.value);
       }
-    });
-  } catch (error) {
-    [limited, updateLimited] = useState({});
-  }
+    } catch (error) {
+      return {}
+    }
+  });
+
   const selected = useMemo(() => props.options.subject, [props]);
   useEffect(() => {
+    console.log(selected)
     selected !== "" &&
       GET("/educational/chapters", { id: selected }).then(({ data }) => {
         updateChapters(data);
         updateLimited(
           data.reduce((prev, curr) => {
+            const nextValue = limited[curr.id] ? limited[curr.id] : 10
             return {
               ...prev,
-              [curr.id]: 10,
+              [curr.id]: nextValue,
             };
           }, {})
         );
@@ -33,6 +35,7 @@ export default (props) => {
   }, [selected]);
 
   useEffect(() => {
+    console.log(limited)
     props.onChange(props.name, JSON.stringify(limited));
   }, [limited]);
 

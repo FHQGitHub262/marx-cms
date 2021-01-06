@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useRef } from "react";
 import beforeSubmit from "../../lib/beforeSubmit";
 import Context from "../../context";
 
@@ -18,6 +18,8 @@ export default (props) => {
   const [addVisible, setAddVisible] = useState(false);
   const [importVisible, setImportVisible] = useState(false);
   const context = useContext(Context);
+
+  const selectorRef = useRef()
 
   const [loading, setLoading] = useState(false);
   const [raw, setRaw] = useState([]);
@@ -58,6 +60,8 @@ export default (props) => {
         handleOk={() => {
           if (beforeSubmit(context.studentImporter)) {
             console.log(context.studentImporter);
+            // setSelector({})
+
             POST("/school/student/import", {
               filename: context.studentImporter.data.id,
               college: selector.college,
@@ -65,7 +69,8 @@ export default (props) => {
               .then((res) => {
                 notification.success({ message: "添加成功", duration: 2 });
                 changeImportPop();
-                init();
+                selectorRef.current.init()
+                setRaw([])
               })
               .catch((e) => {
                 notification.error({
@@ -168,7 +173,7 @@ export default (props) => {
 
       <Container>
         <Row>
-          <ClassSelector onChange={(e) => setSelector(e)} />
+          <ClassSelector ref={selectorRef} onChange={(e) => setSelector(e)} />
 
         </Row>
 

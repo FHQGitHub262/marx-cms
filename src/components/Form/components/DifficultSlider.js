@@ -7,44 +7,50 @@ export default (props) => {
   const max = 10;
   const min = 0;
   let value, handleChange;
-  try {
-    [value, handleChange] = useState(() => {
+
+  [value, handleChange] = useState(() => {
+    try {
+      console.log('state', props.value)
       if (props.range === "") {
         return [3, 7];
       }
-      const range = JSON.parse(props.value || "[]");
+      let range = JSON.parse(props.value || "[]");
+      if(typeof range === 'string') range = JSON.parse(range)
+      console.log("range", range)
       if (range.length <= 0) {
         return [3, 7];
       } else {
         return range;
       }
-    });
-  } catch (error) {
-    [value, handleChange] = useState([3, 7]);
-  }
+    } catch (error) {
+      return [3, 7]
+    }
+  });
+
 
   const mid = ((max - min) / 2).toFixed(5);
 
-  useEffect(() => {
-    if (props.value === "") {
-      props.onChange(props.name, JSON.stringify([3, 7]));
-    }
-    const range = JSON.parse(props.value || "[]");
+  // useEffect(() => {
+  //   if (props.value === "" && ) {
+  //     props.onChange(props.name, JSON.stringify([3, 7]));
+  //   }
+  //   const range = JSON.parse(props.value || "[]");
 
-    props.onChange(
-      props.name,
-      (() => {
-        if (range.length <= 0) {
-          return [3, 7];
-        } else {
-          return range;
-        }
-      })()
-    );
-    // console.log(JSON.parse((props.rootValue || "{}")[props.name]));
-  }, []);
+  //   props.onChange(
+  //     props.name,
+  //     (() => {
+  //       if (range.length <= 0) {
+  //         return [3, 7];
+  //       } else {
+  //         return range;
+  //       }
+  //     })()
+  //   );
+  //   // console.log(JSON.parse((props.rootValue || "{}")[props.name]));
+  // }, []);
 
   useEffect(() => {
+    console.log('value', value)
     props.onChange(props.name, JSON.stringify(value));
   }, [value]);
 

@@ -5,6 +5,7 @@ import SortTable from "../../components/SortTable";
 import DataShower from "../../components/DataShower";
 import { DOWNLOAD, GET } from "../../lib/fetch";
 import { decode } from "../../lib/params";
+import { Button } from "antd";
 
 export default (props) => {
   const [statistics, setStatistics] = useState([]);
@@ -97,6 +98,20 @@ export default (props) => {
                 return record.grade || 0;
               },
             },
+            {
+              title: "操作",
+              dataIndex: "op",
+              render: (text, record) => {
+                return <Button onClick={
+                  () => {
+                    DOWNLOAD("/educational/exam/word", {
+                      id: query.id,
+                      userId: record.id
+                    });
+                  }
+                }>下载试卷</Button>
+              }
+            }
           ]}
           data={record}
         />

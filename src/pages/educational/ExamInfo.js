@@ -3,9 +3,9 @@ import Header from "../../components/Header";
 import Container from "../../components/Container";
 import SortTable from "../../components/SortTable";
 import DataShower from "../../components/DataShower";
-import { DOWNLOAD, GET } from "../../lib/fetch";
+import { DOWNLOAD, GET, POST } from "../../lib/fetch";
 import { decode } from "../../lib/params";
-import { Button } from "antd";
+import { Button, message } from "antd";
 
 export default (props) => {
   const [statistics, setStatistics] = useState([]);
@@ -47,11 +47,7 @@ export default (props) => {
             {
               title: "最高分",
               value: statistics.max || "",
-            },
-            {
-              title: "及格人数",
-              value: statistics.pass || "",
-            },
+            }
           ]}
         />
         <SortTable
@@ -64,6 +60,17 @@ export default (props) => {
                 });
               },
             },
+            {
+              title: "重新判卷",
+              handler: async () => {
+                message.info('开始判卷')
+                await POST('/educational/exam/judge', {
+                  id: query.id
+                })
+                message.info('判卷结束')
+                await init()
+              }
+            }
           ]}
           columns={[
             {
